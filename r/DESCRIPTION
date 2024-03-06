@@ -1,4 +1,4 @@
-Package: BPCells
+Package: BPCells.dev
 Title: Single Cell Counts Matrices to PCA
 Version: 0.1.0
 Authors@R: c(

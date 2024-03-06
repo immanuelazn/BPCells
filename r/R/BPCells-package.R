@@ -6,7 +6,7 @@
 # option. This file may not be copied, modified, or distributed
 # except according to those terms.
 
-#' @useDynLib BPCells, .registration = TRUE
+#' @useDynLib BPCells.dev, .registration = TRUE
 #' @importFrom Rcpp sourceCpp
 #' @importClassesFrom Matrix dgCMatrix
 #' @importFrom methods is new as
