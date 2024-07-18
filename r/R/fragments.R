@@ -406,8 +406,8 @@ setClass("FragmentsDirNoNames",
     buffer_size = 1024L
   )
 )
-setMethod("chrNames", "FragmentsDirNoNames", function(x) info_fragments_file_cpp(x@dir, x@buffer_size)$chr_names)
-setMethod("cellNames", "FragmentsDirNoNames", function(x) info_fragments_file_cpp(x@dir, x@buffer_size)$cell_names)
+setMethod("chrNames", "FragmentsDirNoNames", function(x) chr_names_fragments_file_no_names_cpp(x@dir, x@buffer_size))
+setMethod("cellNames", "FragmentsDirNoNames", function(x) rlang::abort("Error: not expecting an R call cellNames on FragmentsDirNoNames"))
 setMethod("iterate_fragments", "FragmentsDirNoNames", function(x) {
   if (x@compressed) {
     iterate_packed_fragments_file_no_names_cpp(x@dir, x@buffer_size)
@@ -1188,9 +1188,9 @@ setMethod("c", "IterableFragments", function(x, ...) {
     return(fragments_list)[[1]]
   }
   res <- new("MergeFragments", fragments_list = fragments_list)
-  if (anyDuplicated(cellNames(res))) {
-    rlang::inform(c("Warning: duplicicate cell names detected when merging fragments.", "Try using prefix_cell_names() to disambiguate"))
-  }
+  # if (anyDuplicated(cellNames(res))) {
+  #   rlang::inform(c("Warning: duplicicate cell names detected when merging fragments.", "Try using prefix_cell_names() to disambiguate"))
+  # }
   return(res)
 })
 

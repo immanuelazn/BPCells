@@ -429,6 +429,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// chr_names_fragments_file_no_names_cpp
+StringVector chr_names_fragments_file_no_names_cpp(std::string dir, uint32_t buffer_size);
+RcppExport SEXP _BPCells_chr_names_fragments_file_no_names_cpp(SEXP dirSEXP, SEXP buffer_sizeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type dir(dirSEXP);
+    Rcpp::traits::input_parameter< uint32_t >::type buffer_size(buffer_sizeSEXP);
+    rcpp_result_gen = Rcpp::wrap(chr_names_fragments_file_no_names_cpp(dir, buffer_size));
+    return rcpp_result_gen;
+END_RCPP
+}
 // write_packed_fragments_file_cpp
 void write_packed_fragments_file_cpp(SEXP fragments, std::string dir, uint32_t buffer_size, bool allow_overwrite);
 RcppExport SEXP _BPCells_write_packed_fragments_file_cpp(SEXP fragmentsSEXP, SEXP dirSEXP, SEXP buffer_sizeSEXP, SEXP allow_overwriteSEXP) {
@@ -2521,6 +2533,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BPCells_write_unpacked_fragments_file_cpp", (DL_FUNC) &_BPCells_write_unpacked_fragments_file_cpp, 4},
     {"_BPCells_iterate_packed_fragments_file_cpp", (DL_FUNC) &_BPCells_iterate_packed_fragments_file_cpp, 4},
     {"_BPCells_iterate_packed_fragments_file_no_names_cpp", (DL_FUNC) &_BPCells_iterate_packed_fragments_file_no_names_cpp, 2},
+    {"_BPCells_chr_names_fragments_file_no_names_cpp", (DL_FUNC) &_BPCells_chr_names_fragments_file_no_names_cpp, 2},
     {"_BPCells_write_packed_fragments_file_cpp", (DL_FUNC) &_BPCells_write_packed_fragments_file_cpp, 4},
     {"_BPCells_info_fragments_hdf5_cpp", (DL_FUNC) &_BPCells_info_fragments_hdf5_cpp, 3},
     {"_BPCells_iterate_unpacked_fragments_hdf5_cpp", (DL_FUNC) &_BPCells_iterate_unpacked_fragments_hdf5_cpp, 5},

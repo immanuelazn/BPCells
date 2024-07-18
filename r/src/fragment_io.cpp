@@ -209,6 +209,44 @@ SEXP iterate_packed_fragments_file_no_names_cpp(
     ));
 }
 
+// // [[Rcpp::export]]
+// StringVector cell_names_fragments_file_no_names_cpp(StoredFragmentsBase &&frags) {
+//     uint32_t cell_count = frags.cellCount();
+//     StringVector cell_names(cell_count);
+//     for (uint32_t i = 0; i < chr_count; i++) {
+//         if (frags.chrNames(i) == NULL) {
+//             throw std::runtime_error("Error retrieving chrNames from stored fragments");
+//         }
+//         chr_names[i] = frags.chrNames(i);
+//     }
+//     for (uint32_t i = 0; i < cell_count; i++) {
+//         if (frags.cellNames(i) == NULL) {
+//             throw std::runtime_error("Error retrieving cellNames from stored fragments");
+//         }
+//         cell_names[i] = frags.cellNames(i);
+//     }
+//     return List::create(Named("chr_names") = chr_names, Named("cell_names") = cell_names);
+// }
+
+// [[Rcpp::export]]
+StringVector chr_names_fragments_file_no_names_cpp(std::string dir, uint32_t buffer_size) {
+    FileReaderBuilder rb(dir, buffer_size);
+    StoredFragmentsPacked frags = StoredFragmentsPacked::openPacked(
+        rb,
+        1024,
+        std::unique_ptr<StringReader>(nullptr),
+        std::unique_ptr<StringReader>(nullptr)
+    );
+    uint32_t chr_count = frags.chrCount();
+    StringVector chr_names(chr_count);
+    for (uint32_t i = 0; i < chr_count; i++) {
+        if (frags.chrNames(i) == NULL) {
+            throw std::runtime_error("Error retrieving chrNames from stored fragments");
+        }
+        chr_names[i] = frags.chrNames(i);
+    }
+    return chr_names;
+}
 
 // [[Rcpp::export]]
 void write_packed_fragments_file_cpp(
