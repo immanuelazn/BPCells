@@ -197,6 +197,20 @@ SEXP iterate_packed_fragments_file_cpp(
 }
 
 // [[Rcpp::export]]
+SEXP iterate_packed_fragments_file_no_names_cpp(
+    std::string dir, uint32_t buffer_size
+) {
+    FileReaderBuilder rb(dir, buffer_size);
+    return make_unique_xptr<StoredFragmentsPacked>(StoredFragmentsPacked::openPacked(
+        rb,
+        1024,
+        std::unique_ptr<StringReader>(nullptr),
+        std::unique_ptr<StringReader>(nullptr)
+    ));
+}
+
+
+// [[Rcpp::export]]
 void write_packed_fragments_file_cpp(
     SEXP fragments, std::string dir, uint32_t buffer_size, bool allow_overwrite
 ) {

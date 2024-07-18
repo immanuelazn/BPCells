@@ -393,6 +393,86 @@ open_fragments_dir <- function(dir, buffer_size = 1024L) {
   new("FragmentsDir", dir = dir, compressed = info$compressed, buffer_size = buffer_size, cell_names = info$cell_names, chr_names = info$chr_names)
 }
 
+setClass("FragmentsDirNoNames",
+  contains = "IterableFragments",
+  slots = c(
+    dir = "character",
+    compressed = "logical",
+    buffer_size = "integer"
+  ),
+  prototype = list(
+    dir = character(0),
+    compressed = TRUE,
+    buffer_size = 1024L
+  )
+)
+setMethod("chrNames", "FragmentsDirNoNames", function(x) info_fragments_file_cpp(x@dir, x@buffer_size)$chr_names)
+setMethod("cellNames", "FragmentsDirNoNames", function(x) info_fragments_file_cpp(x@dir, x@buffer_size)$cell_names)
+setMethod("iterate_fragments", "FragmentsDirNoNames", function(x) {
+  if (x@compressed) {
+    iterate_packed_fragments_file_no_names_cpp(x@dir, x@buffer_size)
+  } else {
+    iterate_unpacked_fragments_file_no_names_cpp(x@dir, x@buffer_size)
+  }
+})
+setMethod("short_description", "FragmentsDirNoNames", function(x) {
+  sprintf(
+    "Read %s fragments from directory %s (lazy names only)",
+    if (x@compressed) "compressed" else "uncompressed",
+    x@dir
+  )
+})
+
+#' @param dir Directory to read/write the data from
+#' @param buffer_size For performance tuning only. The number of items to be bufferred
+#' in memory before calling writes to disk.
+#' @param overwrite If `TRUE`, write to a temp dir then overwrite existing data. Alternatively,
+#'   pass a temp path as a string to customize the temp dir location.
+#' @return Fragment object
+#' @rdname fragment_io
+write_fragments_dir_no_names <- function(fragments, dir, compress = TRUE, buffer_size = 1024L, overwrite = FALSE) {
+  assert_is(fragments, "IterableFragments")
+  assert_is(dir, "character")
+  assert_is(compress, "logical")
+  assert_true(compress)
+  assert_is(buffer_size, "integer")
+  assert_is(overwrite, c("logical", "character"))
+  if (is(overwrite, "character")) {
+    assert_true(dir.exists(overwrite))
+    overwrite_path <- tempfile("overwrite", tmpdir=overwrite)
+    overwrite <- TRUE
+  } else if (overwrite) {
+    overwrite_path <- tempfile("overwrite")
+  }
+
+  dir <- normalizePath(dir, mustWork=FALSE)
+  did_tmp_copy <- FALSE
+  if (overwrite && dir.exists(dir)) {
+    fragments <- write_fragments_dir_no_names(fragments, overwrite_path, compress, buffer_size)
+    did_tmp_copy <- TRUE
+  }
+
+  it <- iterate_fragments(fragments)
+  if (compress) {
+    write_packed_fragments_file_cpp(it, dir, buffer_size, overwrite)
+  } else {
+    write_unpacked_fragments_file_cpp(it, dir, buffer_size, overwrite)
+  }
+
+  if (did_tmp_copy) {
+    unlink(overwrite_path, recursive=TRUE)
+  }
+  open_fragments_dir_no_names(dir, buffer_size)
+}
+
+open_fragments_dir_no_names <- function(dir, buffer_size = 1024L) {
+  assert_is_file(dir)
+  assert_is(buffer_size, "integer")
+
+  dir <- normalizePath(dir, mustWork=FALSE)
+  new("FragmentsDirNoNames", dir = dir, compressed = TRUE, buffer_size = buffer_size)
+}
+
 setClass("FragmentsHDF5",
   contains = "IterableFragments",
   slots = c(

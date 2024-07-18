@@ -129,6 +129,10 @@ iterate_packed_fragments_file_cpp <- function(dir, buffer_size, chr_names, cell_
     .Call(`_BPCells_iterate_packed_fragments_file_cpp`, dir, buffer_size, chr_names, cell_names)
 }
 
+iterate_packed_fragments_file_no_names_cpp <- function(dir, buffer_size) {
+    .Call(`_BPCells_iterate_packed_fragments_file_no_names_cpp`, dir, buffer_size)
+}
+
 write_packed_fragments_file_cpp <- function(fragments, dir, buffer_size, allow_overwrite) {
     invisible(.Call(`_BPCells_write_packed_fragments_file_cpp`, fragments, dir, buffer_size, allow_overwrite))
 }
