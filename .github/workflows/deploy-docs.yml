@@ -1,0 +1,52 @@
+name: Build and Deploy Docs
+on:
+  push:
+    branches:
+      - main
+  pull_request: 
+    branches:
+      - main
+jobs:
+  build_docs:
+    name: Build and Deploy Documentation
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # to ensure other branches are available for build
+    - name: Install system dependencies
+      run: sudo apt-get install -y libhdf5-dev
+    - name: Set r compilation options
+      run: bash -c 'echo -e "MAKEFLAGS=--jobs=3\nCXXFLAGS += -O1 -UNDEBUG" > "$GITHUB_WORKSPACE/Makevars.user" && echo "R_MAKEVARS_USER=$GITHUB_WORKSPACE/Makevars.user" >> "$GITHUB_ENV"'
+    - name: Setup R
+      uses: r-lib/actions/setup-r@v2
+    - name: Install R dependencies
+      uses: r-lib/actions/setup-r-dependencies@v2
+      with: 
+        cache-version: 1
+        working-directory: 'r'
+        extra-packages: 'pkgdown'
+    - name: Create git worktree with docs branch
+      run: git worktree add r/docs docs-html
+    - name: Build documentation
+      run: Rscript .github/workflows/deploy-reference.R
+    - name: Create new branch
+      run: |
+        git checkout -b update-docs-${{ github.sha }}
+        git add .
+        git commit -m "Update documentation for commit ${{ github.sha }}"
+      working-directory: r/docs
+
+    - name: Push changes to new branch
+      run: git push origin update-docs-${{ github.sha }}
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v7
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        branch: update-docs-${{ github.sha }}
+        base: docs-html
+        title: "Update documentation for ${{ github.sha }}"
+        body: "This PR updates the documentation site for commit ${{ github.sha }}."
+        labels: documentation
+    
