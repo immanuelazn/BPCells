@@ -27,8 +27,8 @@ jobs:
         cache-version: 1
         working-directory: 'r'
         extra-packages: |
-            'pkgdown'
-            'devtools'
+            'any::pkgdown'
+            'any::devtools'
     - name: Create git worktree with docs branch
       run: git worktree add r/docs docs-html
     - name: Build documentation
