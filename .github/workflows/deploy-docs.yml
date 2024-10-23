@@ -35,24 +35,18 @@ jobs:
       run: Rscript .github/workflows/deploy-reference.R
     - name: Configure Git
       run: |
-        git config --global user.name "github-actions[bot]"
-        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git config --global user.name "${{ github.actor }}"
+        git config --global user.email "${{ github.actor }}@users.noreply.github.com"
     - name: Create new branch
       run: |
         git checkout -b update-docs-${{ github.sha }}
         git add .
         git commit -m "Update documentation for commit ${{ github.sha }}"
       working-directory: r/docs
-
     - name: Push changes to new branch
       run: git push origin update-docs-${{ github.sha }}
     - name: Create Pull Request
-      uses: peter-evans/create-pull-request@v7
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        branch: update-docs-${{ github.sha }}
-        base: docs-html
-        title: "Update documentation for ${{ github.sha }}"
-        body: "This PR updates the documentation site for commit ${{ github.sha }}."
-        labels: documentation
+      run: |
+        gh pr create --title "Update documentation for commit ${{ github.sha }}" --body "This PR updates the documentation for commit ${{ github.sha }}" --base main --head update-docs-${{ github.sha }}
+        
     
