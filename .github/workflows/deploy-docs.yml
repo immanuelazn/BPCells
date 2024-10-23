@@ -31,7 +31,7 @@ jobs:
             any::devtools
     - name: Get last commit message
       id: last_commit
-      run: echo "LAST_COMMIT_MESSAGE=$(git log -n 5 --pretty=%B)" >> "$GITHUB_OUTPUT"
+      run: echo "LAST_COMMIT_MESSAGE=$(git log -n 5 --pretty=%B)" >> "$GITHUB_ENV"
     - name: Create git worktree with docs branch
       run: git worktree add r/docs docs-html
     - name: Build documentation
