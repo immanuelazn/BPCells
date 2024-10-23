@@ -35,21 +35,22 @@ jobs:
     - name: Create git worktree with docs branch
       run: git worktree add r/docs docs-html
     - name: Build documentation
-      run: Rscript .github/workflows/deploy-reference.R
+      run: |
+        Rscript .github/workflows/deploy-reference.R
     - name: Configure Git
       run: |
         git config --global user.name "${{ github.actor }}"
         git config --global user.email "${{ github.actor }}@users.noreply.github.com"
     - name: Create new branch
       run: |
-        git checkout -b update-docs-${{ github.sha.substring(0, 6) }}
+        git checkout -b update-docs-$(git rev-parse --short=6 ${{ github.sha }})
         git add .
-        git commit -m "Update documentation for commit ${{ github.sha.substring(0, 6) }}"
+        git commit -m "Update documentation for commit $(git rev-parse --short=6 ${{ github.sha }})"
       working-directory: r/docs
     - name: Push changes to new branch
-      run: git push origin update-docs-${{ github.sha }}
+      run: git push origin update-docs-$(git rev-parse --short=6 ${{ github.sha }})
     - name: Create Pull Request # use message with last commit
       run: |
-        gh pr create --title "Update docs for commit" --body "${{ steps.last_commit_message.outputs.message }}" --base docs-html --head update-docs-${{ github.sha.substring(0, 6) }}
+        gh pr create --title "Update docs for commit" --body "${{ steps.last_commit_message.outputs.message }}" --base docs-html --head update-docs-$(git rev-parse --short=6 ${{ github.sha }})
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
