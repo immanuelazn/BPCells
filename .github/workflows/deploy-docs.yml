@@ -30,7 +30,8 @@ jobs:
             any::pkgdown
             any::devtools
     - name: Get last commit message
-      run: echo "last_commit_message=$(git log -1 --pretty=%B)" >> $GITHUB_ENV
+      id: last_commit
+      run: echo "LAST_COMMIT_MESSAGE=$(git log -1 --pretty=%B)" >> "$GITHUB_OUTPUT"
     - name: Create git worktree with docs branch
       run: git worktree add r/docs docs-html
     - name: Build documentation
@@ -50,6 +51,6 @@ jobs:
       run: git push origin update-docs-$(git rev-parse --short=6 ${{ github.sha }})
     - name: Create Pull Request # use message with last commit
       run: |
-        gh pr create --title "Update docs for commit" --body "${{ last_commit_message }}" --base docs-html --head update-docs-$(git rev-parse --short=6 ${{ github.sha }})
+        gh pr create --title "Update docs for commit" --body "${{steps.last_commit.outputs.LAST_COMMIT_MESSAGE}}" --base docs-html --head update-docs-$(git rev-parse --short=6 ${{ github.sha }})
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
