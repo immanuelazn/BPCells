@@ -34,7 +34,7 @@ jobs:
       run: |
         {
           echo 'LAST_COMMIT_MESSAGE<<EOF'
-          git log -n 5 --pretty=%B
+          git log -n 1
           echo 'EOF'
         } >> "$GITHUB_ENV"
     - name: Create git worktree with docs branch
