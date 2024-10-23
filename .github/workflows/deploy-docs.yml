@@ -29,6 +29,9 @@ jobs:
         extra-packages: |
             any::pkgdown
             any::devtools
+    - name: Get last commit message
+      id: last_commit_message
+      run: echo "::set-output name=message::$(git log -1 --pretty=%B)"
     - name: Create git worktree with docs branch
       run: git worktree add r/docs docs-html
     - name: Build documentation
@@ -39,15 +42,14 @@ jobs:
         git config --global user.email "${{ github.actor }}@users.noreply.github.com"
     - name: Create new branch
       run: |
-        git checkout -b update-docs-${{ github.sha }}
+        git checkout -b update-docs-${{ github.sha.substring(0, 6) }}
         git add .
-        git commit -m "Update documentation for commit ${{ github.sha }}"
+        git commit -m "Update documentation for commit ${{ github.sha.substring(0, 6) }}"
       working-directory: r/docs
     - name: Push changes to new branch
       run: git push origin update-docs-${{ github.sha }}
     - name: Create Pull Request # use message with last commit
       run: |
-        last_commit_message=$(git log -1 --pretty=%B)
-        gh pr create --title "Update docs for commit" --body "$last_commit_message" --base docs-html --head update-docs-${{ github.sha }}
+        gh pr create --title "Update docs for commit" --body "${{ steps.last_commit_message.outputs.message }}" --base docs-html --head update-docs-${{ github.sha.substring(0, 6) }}
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
