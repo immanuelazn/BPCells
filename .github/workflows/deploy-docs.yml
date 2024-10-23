@@ -47,8 +47,6 @@ jobs:
       run: git push origin update-docs-${{ github.sha }}
     - name: Create Pull Request
       run: |
-        gh pr create --title "Update documentation for commit ${{ github.sha }}" --body "This PR updates the documentation for commit ${{ github.sha }}" --base main --head update-docs-${{ github.sha }}
+        gh pr create --title "Update documentation for commit ${{ github.sha }}" --body "This PR updates the documentation for commit ${{ github.sha }}" --base docs-html --head update-docs-${{ github.sha }}
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        
-    
