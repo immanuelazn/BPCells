@@ -59,8 +59,7 @@
 
 
 
-
-<div class="row">
+<script src="developer-notes_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Notes for Developers</h1>
@@ -75,50 +74,20 @@
 <div class="section level2">
 <h2 id="garbage-collection-and-threads">Garbage collection and threads<a class="anchor" aria-label="anchor" href="#garbage-collection-and-threads"></a>
 </h2>
-<p>To help avoid unnecessary copies, BPCells in some circumstances keeps
-direct references to R objects. The major use-cases when that happens
-are:</p>
+<p>To help avoid unnecessary copies, BPCells in some circumstances keeps direct references to R objects. The major use-cases when that happens are:</p>
 <ol style="list-style-type: decimal">
 <li>Loading data from an R object (e.g. dgCMatrix)</li>
-<li>Using pre-loaded R vectors holding row/col names (or cell/chr names)
-to avoid repeatedly reading from disk.</li>
+<li>Using pre-loaded R vectors holding row/col names (or cell/chr names) to avoid repeatedly reading from disk.</li>
 </ol>
-<p>Unfortunately, we need to be extremely careful that these R objects
-are only created/destroyed <em>on the R main thread</em>. As stated in
-the <a href="https://cran.r-project.org/doc/manuals/r-release/R-exts.html#OpenMP-support" class="external-link">R
-extensions documentation</a>:</p>
+<p>Unfortunately, we need to be extremely careful that these R objects are only created/destroyed <em>on the R main thread</em>. As stated in the <a href="https://cran.r-project.org/doc/manuals/r-release/R-exts.html#OpenMP-support" class="external-link">R extensions documentation</a>:</p>
 <blockquote>
-<p>Calling any of the R API from threaded code is ‘for experts only’ and
-strongly discouraged. Many functions in the R API modify internal R data
-structures and might corrupt these data structures if called
-simultaneously from multiple threads. Most R API functions can signal
-errors, which must only happen on the R main thread. Also, external
-libraries (e.g. LAPACK) may not be thread-safe.</p>
+<p>Calling any of the R API from threaded code is ‘for experts only’ and strongly discouraged. Many functions in the R API modify internal R data structures and might corrupt these data structures if called simultaneously from multiple threads. Most R API functions can signal errors, which must only happen on the R main thread. Also, external libraries (e.g. LAPACK) may not be thread-safe.</p>
 </blockquote>
-<p>Within Rcpp, R objects will default to being protected from garbage
-collection (<a href="https://github.com/RcppCore/Rcpp/blob/master/inst/include/Rcpp/storage/PreserveStorage.h" class="external-link">code
-link</a>). This means, however, that the Rcpp object constructors and
-destructors must only execute on the main thread as they interact with
-the R API to manage GC protection.</p>
-<p>From the design of BPCells C++ code, we will often have code that is
-running not on the main thread, e.g. the C++ function
-<code>run_with_R_interrupt_check</code> runs the main work in a
-background thread to simplify interrupt checking. And obviously explicit
-parallelization will result in code running off the main thread.</p>
-<p>For safety, we must assume that <code>MatrixLoader</code> and
-<code>FragmentLoader</code> objects may contain references to R objects.
-Therefore their constructors and destructors can only be called from the
-main thread.</p>
-<p>Ensuring constructors are only called from the main thread is fairly
-simple – just put all constructors in the top level when directly
-requested from R.</p>
-<p>To ensure destructors are only called on the main thread, we must
-never give ownership of a <code>MatrixLoader</code> or
-<code>FragmentLoader</code> object to a worker thread. Passing
-references or raw pointers is fine. Giving ownership via unique_ptr,
-move semantics, or pass-by-value must all be avoided when handing a
-<code>MatrixLoader</code> or <code>FragmentLoader</code> to a worker
-thread.</p>
+<p>Within Rcpp, R objects will default to being protected from garbage collection (<a href="https://github.com/RcppCore/Rcpp/blob/master/inst/include/Rcpp/storage/PreserveStorage.h" class="external-link">code link</a>). This means, however, that the Rcpp object constructors and destructors must only execute on the main thread as they interact with the R API to manage GC protection.</p>
+<p>From the design of BPCells C++ code, we will often have code that is running not on the main thread, e.g. the C++ function <code>run_with_R_interrupt_check</code> runs the main work in a background thread to simplify interrupt checking. And obviously explicit parallelization will result in code running off the main thread.</p>
+<p>For safety, we must assume that <code>MatrixLoader</code> and <code>FragmentLoader</code> objects may contain references to R objects. Therefore their constructors and destructors can only be called from the main thread.</p>
+<p>Ensuring constructors are only called from the main thread is fairly simple – just put all constructors in the top level when directly requested from R.</p>
+<p>To ensure destructors are only called on the main thread, we must never give ownership of a <code>MatrixLoader</code> or <code>FragmentLoader</code> object to a worker thread. Passing references or raw pointers is fine. Giving ownership via unique_ptr, move semantics, or pass-by-value must all be avoided when handing a <code>MatrixLoader</code> or <code>FragmentLoader</code> to a worker thread.</p>
 </div>
   </main>
 </div>
@@ -130,7 +99,7 @@ thread.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer>
