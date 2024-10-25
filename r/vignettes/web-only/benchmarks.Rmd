@@ -27,7 +27,7 @@ raw counts[^2].
 [^2]: In this case, our PCA embeddings have a mean relative difference of about
 0.02% compared to the original tool. In this benchmark we are matching the
 results of `scanpy.pp.recipe_zheng17`, though we can also match the results of
-Seurat's analysis to similar precision.
+Seurat's analysis to similar precision. t.s.t.s.ss.ss.
 
 ![](benchmark-plots/rna_memory.png)
 
