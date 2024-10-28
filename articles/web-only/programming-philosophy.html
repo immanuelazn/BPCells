@@ -59,8 +59,7 @@
 
 
 
-
-<div class="row">
+<script src="programming-philosophy_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Programming Philosophy</h1>
@@ -75,60 +74,35 @@
 <div class="section level2">
 <h2 id="programming-philosopy">Programming philosopy<a class="anchor" aria-label="anchor" href="#programming-philosopy"></a>
 </h2>
-<p>BPCells operates according to a somewhat different programming
-philosophy from other tools. In particular:</p>
+<p>BPCells operates according to a somewhat different programming philosophy from other tools. In particular:</p>
 <ul>
-<li>BPCells aims to perform most analysis directly from raw data
-matrices or aligned fragments
+<li>BPCells aims to perform most analysis directly from raw data matrices or aligned fragments
 <ul>
-<li>It does not modify input data files, instead preferring to write a
-copy to a new location when needed.</li>
-<li>Analysis code that runs quickly from raw counts provides clear
-reproducibility and data provenance</li>
+<li>It does not modify input data files, instead preferring to write a copy to a new location when needed.</li>
+<li>Analysis code that runs quickly from raw counts provides clear reproducibility and data provenance</li>
 </ul>
 </li>
-<li>BPCells generally avoids storing normalized matrix copies (sometimes
-referred to as layers), instead preferring to re-calculate normalized
-values on-the-fly. This helps to avoid wasteful storage use.</li>
-<li>BPCells does not (currently) have a concept of a “project” object
-that combines data + metadata in a complex structure.</li>
+<li>BPCells generally avoids storing normalized matrix copies (sometimes referred to as layers), instead preferring to re-calculate normalized values on-the-fly. This helps to avoid wasteful storage use.</li>
+<li>BPCells does not (currently) have a concept of a “project” object that combines data + metadata in a complex structure.</li>
 </ul>
 <div class="section level3">
 <h3 id="working-without-a-project-object">Working without a project object<a class="anchor" aria-label="anchor" href="#working-without-a-project-object"></a>
 </h3>
-<p>Imagine you want to plot a UMAP of your cells colored by cluster. In
-BPCells, the way you do this is by providing:</p>
-<p>1, The matrix of cells x UMAP coordinates 2. A vector listing which
-cells belong to which cluster</p>
-<p>The correspondence of cells and clusters is determined based on
-ordering. So the rows of the UMAP matrix should have the same order as
-the cluster membership vector.</p>
+<p>Imagine you want to plot a UMAP of your cells colored by cluster. In BPCells, the way you do this is by providing:</p>
+<p>1, The matrix of cells x UMAP coordinates 2. A vector listing which cells belong to which cluster</p>
+<p>The correspondence of cells and clusters is determined based on ordering. So the rows of the UMAP matrix should have the same order as the cluster membership vector.</p>
 <p>To keep this simple, we recommend the following approach:</p>
 <ol style="list-style-type: decimal">
-<li>At the start of your analysis, establish a consistent cell ordering
-when you perform quality filtering
+<li>At the start of your analysis, establish a consistent cell ordering when you perform quality filtering
 <ul>
-<li>See the <a href="../pbmc3k.html#select-high-quality-cells">tutorial</a> for an
-example, where we make a <code>keeper_cells</code> vector and order our
-data consistently according to that list of cell IDs.</li>
+<li>See the <a href="../pbmc3k.html#select-high-quality-cells">tutorial</a> for an example, where we make a <code>keeper_cells</code> vector and order our data consistently according to that list of cell IDs.</li>
 </ul>
 </li>
-<li>For all downstream operations (PCA, clustering, etc.), this cell
-order will be preserved unless you explicitly change it. So things will
-“just work”</li>
-<li>To keep track of per-cell metadata, it can be helpful to make a data
-frame tracking sample IDs, cluster membership, and other metadata
-yourself</li>
+<li>For all downstream operations (PCA, clustering, etc.), this cell order will be preserved unless you explicitly change it. So things will “just work”</li>
+<li>To keep track of per-cell metadata, it can be helpful to make a data frame tracking sample IDs, cluster membership, and other metadata yourself</li>
 </ol>
-<p>Working without a project object provides a lot of flexibility, since
-as the user you can easily swap UMAP embeddings, cluster assignments,
-etc. by just providing a different variable as input. There’s also no
-need to “export” your metadata since there wasn’t an import step to
-begin with.</p>
-<p>Of course, this power does come with additional responsibility to
-keep track of metadata. Keeping BPCells flexible for power users while
-retaining ease-of-use for newbies is an ongoing effort, but BPCells
-currently falls more on the side of power users</p>
+<p>Working without a project object provides a lot of flexibility, since as the user you can easily swap UMAP embeddings, cluster assignments, etc. by just providing a different variable as input. There’s also no need to “export” your metadata since there wasn’t an import step to begin with.</p>
+<p>Of course, this power does come with additional responsibility to keep track of metadata. Keeping BPCells flexible for power users while retaining ease-of-use for newbies is an ongoing effort, but BPCells currently falls more on the side of power users</p>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -142,7 +116,7 @@ currently falls more on the side of power users</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer>
