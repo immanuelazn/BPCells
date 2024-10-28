@@ -59,8 +59,7 @@
 
 
 
-
-<div class="row">
+<script src="programming-efficiency_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Efficiency tips</h1>
@@ -76,75 +75,38 @@
 <h2 id="normalizations-and-pca">Normalizations and PCA<a class="anchor" aria-label="anchor" href="#normalizations-and-pca"></a>
 </h2>
 <ul>
-<li><p>Avoid dense matrices whenever possible. Put normalizations that
-preserve sparsity (0 values stay 0) before normalizations that break
-sparsity (e.g. adding values to each row/column). A typical RNA-seq
-matrix has &lt;5% non-zero entries, so your code will operate on 20x
-more entries with a dense matrix.</p></li>
+<li><p>Avoid dense matrices whenever possible. Put normalizations that preserve sparsity (0 values stay 0) before normalizations that break sparsity (e.g. adding values to each row/column). A typical RNA-seq matrix has &lt;5% non-zero entries, so your code will operate on 20x more entries with a dense matrix.</p></li>
 <li>
-<p>For most operations, we recommend using lazy evaluation to avoid
-creating intermediate matrices. The one common exception to this rule is
-when running PCA. Because PCA requires looping through the matrix
-several hundred times, it is often faster to write the matrix to disk
-once just before PCA rather than recalculating the entries on each PCA
-iteration.</p>
+<p>For most operations, we recommend using lazy evaluation to avoid creating intermediate matrices. The one common exception to this rule is when running PCA. Because PCA requires looping through the matrix several hundred times, it is often faster to write the matrix to disk once just before PCA rather than recalculating the entries on each PCA iteration.</p>
 <ul>
-<li>For storage efficiency, keep any sparsity-breaking normalizations
-delayed, but store all the sparse normalizations in a temporary location
-with <code><a href="../../reference/matrix_io.html">write_matrix_dir()</a></code> then apply the sparsity-breaking
-normalizations</li>
+<li>For storage efficiency, keep any sparsity-breaking normalizations delayed, but store all the sparse normalizations in a temporary location with <code><a href="../../reference/matrix_io.html">write_matrix_dir()</a></code> then apply the sparsity-breaking normalizations</li>
 </ul>
 </li>
-<li><p>Adding values to the rows/columns of a matrix has very little
-overhead for PCA because it translates into a pre or post processing
-step before each mat-vec multiply iteration. As a sparsity-breaking
-operation, adding a vector to the matrix causes most other operations to
-become more expensive, however.</p></li>
+<li><p>Adding values to the rows/columns of a matrix has very little overhead for PCA because it translates into a pre or post processing step before each mat-vec multiply iteration. As a sparsity-breaking operation, adding a vector to the matrix causes most other operations to become more expensive, however.</p></li>
 </ul>
 </div>
 <div class="section level2">
 <h2 id="storage-order">Storage order<a class="anchor" aria-label="anchor" href="#storage-order"></a>
 </h2>
 <ul>
-<li>Sparse matrices can be stored in a row-major or column-major
-orientation with BPCells. Along the indexed dimension (e.g. rows for
-row-major), BPCells can efficiently seek to a selected column without
-reading the whole matrix. This has performance implications for certain
-operations:
+<li>Sparse matrices can be stored in a row-major or column-major orientation with BPCells. Along the indexed dimension (e.g. rows for row-major), BPCells can efficiently seek to a selected column without reading the whole matrix. This has performance implications for certain operations:
 <ul>
-<li>Marker features can only be computed on a matrix indexed by
-gene/feature.</li>
-<li>Sparse matrix multiplication can only be performed between matrices
-with the same storage order</li>
-<li>Sparse matrix multiplication performance can change dramatically
-depending on the storage order and relative matrix size/sparsity. For
-column-major matrices, the left matrix should be fast to load and
-contain few delayed operations, while the right matrix can be slow to
-load and contain many delayed operations. For row-major matrices the
-left/right preferences are reversed.</li>
+<li>Marker features can only be computed on a matrix indexed by gene/feature.</li>
+<li>Sparse matrix multiplication can only be performed between matrices with the same storage order</li>
+<li>Sparse matrix multiplication performance can change dramatically depending on the storage order and relative matrix size/sparsity. For column-major matrices, the left matrix should be fast to load and contain few delayed operations, while the right matrix can be slow to load and contain many delayed operations. For row-major matrices the left/right preferences are reversed.</li>
 </ul>
 </li>
-<li>You can check the storage order for a matrix by printing it out in
-the R terminal</li>
-<li>When calling the <code><a href="https://rdrr.io/pkg/BiocGenerics/man/t.html" class="external-link">t()</a></code> function, BPCells just flips a
-boolean flag for whether the matrix is row-major or column-major. This
-does not affect the underlying storage order.</li>
-<li>To adjust the underlying storage order, call
-<code><a href="../../reference/transpose_storage_order.html">transpose_storage_order()</a></code>. This is a slower operation, that
-requires writing a new copy of the data to disk.</li>
+<li>You can check the storage order for a matrix by printing it out in the R terminal</li>
+<li>When calling the <code><a href="https://rdrr.io/pkg/BiocGenerics/man/t.html" class="external-link">t()</a></code> function, BPCells just flips a boolean flag for whether the matrix is row-major or column-major. This does not affect the underlying storage order.</li>
+<li>To adjust the underlying storage order, call <code><a href="../../reference/transpose_storage_order.html">transpose_storage_order()</a></code>. This is a slower operation, that requires writing a new copy of the data to disk.</li>
 </ul>
 </div>
 <div class="section level2">
 <h2 id="other-tips">Other tips<a class="anchor" aria-label="anchor" href="#other-tips"></a>
 </h2>
 <ul>
-<li>Use a single call to <code><a href="../../reference/matrix_stats.html">matrix_stats()</a></code> to calculate mean +
-variance in a single pass through the matrix when possible. See the
-function reference for details.</li>
-<li>For ATAC-seq data, you can calculate variable features on the tile
-matrix without ever saving it to disk. This allows you to subset to
-variable tiles and create a peak matrix with just your variable tiles
-for some space savings.</li>
+<li>Use a single call to <code><a href="../../reference/matrix_stats.html">matrix_stats()</a></code> to calculate mean + variance in a single pass through the matrix when possible. See the function reference for details.</li>
+<li>For ATAC-seq data, you can calculate variable features on the tile matrix without ever saving it to disk. This allows you to subset to variable tiles and create a peak matrix with just your variable tiles for some space savings.</li>
 </ul>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -158,7 +120,7 @@ for some space savings.</li>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer>

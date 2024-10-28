@@ -54,7 +54,7 @@ number insertions at each basepair for each group listed in <code>cell_groups</c
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">write_insertion_bedgraph</span><span class="op">(</span></span>
 <span>  <span class="va">fragments</span>,</span>
 <span>  <span class="va">path</span>,</span>
-<span>  cell_groups <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  cell_groups <span class="op">=</span> <span class="fu">rlang</span><span class="fu">::</span><span class="fu"><a href="https://rlang.r-lib.org/reference/rep_along.html" class="external-link">rep_along</a></span><span class="op">(</span><span class="fu"><a href="IterableFragments-methods.html">cellNames</a></span><span class="op">(</span><span class="va">fragments</span><span class="op">)</span>, <span class="st">"all"</span><span class="op">)</span>,</span>
 <span>  insertion_mode <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"both"</span>, <span class="st">"start_only"</span>, <span class="st">"end_only"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -68,7 +68,7 @@ number insertions at each basepair for each group listed in <code>cell_groups</c
 
 
 <dt id="arg-path">path<a class="anchor" aria-label="anchor" href="#arg-path"></a></dt>
-<dd><p>Path(s) to save bedgraph to, optionally ending in ".gz" to add gzip compression. If <code>cell_groups</code> is provided,
+<dd><p>(character vector) Path(s) to save bedgraph to, optionally ending in ".gz" to add gzip compression. If <code>cell_groups</code> is provided,
 <code>path</code> must be a named character vector, with one name for each level in <code>cell_groups</code></p></dd>
 
 
@@ -78,7 +78,7 @@ number insertions at each basepair for each group listed in <code>cell_groups</c
 
 
 <dt id="arg-insertion-mode">insertion_mode<a class="anchor" aria-label="anchor" href="#arg-insertion-mode"></a></dt>
-<dd><p>Which fragment ends to use for insertion counts calculation. One of "both", "start_only", or "end_only"</p></dd>
+<dd><p>(string) Which fragment ends to use for coverage calculation. One of "both", "start_only", or "end_only"</p></dd>
 
 </dl></div>
 
@@ -91,7 +91,7 @@ number insertions at each basepair for each group listed in <code>cell_groups</c
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer></div>

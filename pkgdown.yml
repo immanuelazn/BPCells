@@ -1,5 +1,5 @@
-pandoc: 3.1.3
-pkgdown: 2.1.0
+pandoc: 2.9.2.1
+pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   web-only/benchmarks: web-only/benchmarks.html
@@ -9,7 +9,8 @@ articles:
   pbmc3k: pbmc3k.html
   web-only/programming-efficiency: web-only/programming-efficiency.html
   web-only/programming-philosophy: web-only/programming-philosophy.html
-last_built: 2024-07-10T19:55Z
+  web-only/test_extra_document: web-only/test_extra_document.html
+last_built: 2024-10-28T23:32Z
 urls:
   reference: https://bnprks.github.io/BPCells/reference
   article: https://bnprks.github.io/BPCells/articles
