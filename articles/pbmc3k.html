@@ -59,8 +59,7 @@
 
 
 
-
-<div class="row">
+<script src="pbmc3k_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Basic tutorial</h1>
@@ -77,25 +76,17 @@
 </h2>
 <p>In this tutorial, we will will:</p>
 <ul>
-<li><a href="#data-loading">Load RNA and ATAC-seq data from a 10x
-multiome experiment</a></li>
-<li><a href="#filter-for-high-quality-cells">Filter for high-quality
-cells</a></li>
-<li><a href="#rna-normalization-pca-and-umap">RNA PCA + UMAP
-dimensionality reduction</a></li>
+<li><a href="#data-loading">Load RNA and ATAC-seq data from a 10x multiome experiment</a></li>
+<li><a href="#filter-for-high-quality-cells">Filter for high-quality cells</a></li>
+<li><a href="#rna-normalization-pca-and-umap">RNA PCA + UMAP dimensionality reduction</a></li>
 <li><a href="#clustering">Unbiased clustering</a></li>
-<li><a href="#visualize-marker-genes">Visualize marker genes to annotate
-clusters</a></li>
+<li><a href="#visualize-marker-genes">Visualize marker genes to annotate clusters</a></li>
 <li><a href="#atac-seq-peaks">Call ATAC-seq peaks</a></li>
-<li><a href="#atac-normalization-pca-and-umap">ATAC PCA + UMAP
-dimensionality reduction</a></li>
-<li><a href="#motif-footprinting">Visualize transcription factor
-footprints</a></li>
-<li><a href="#genome-accessibility-tracks">Plot accessibility genome
-tracks</a></li>
+<li><a href="#atac-normalization-pca-and-umap">ATAC PCA + UMAP dimensionality reduction</a></li>
+<li><a href="#motif-footprinting">Visualize transcription factor footprints</a></li>
+<li><a href="#genome-accessibility-tracks">Plot accessibility genome tracks</a></li>
 </ul>
-<p>This tutorial is a work-in-progress, inspired by Seurat’s <a href="https://satijalab.org/seurat/articles/pbmc3k_tutorial.html" class="external-link">PBMC
-3k</a> clustering tutorial.</p>
+<p>This tutorial is a work-in-progress, inspired by Seurat’s <a href="https://satijalab.org/seurat/articles/pbmc3k_tutorial.html" class="external-link">PBMC 3k</a> clustering tutorial.</p>
 </div>
 <div class="section level2">
 <h2 id="setup">Setup<a class="anchor" aria-label="anchor" href="#setup"></a>
@@ -103,16 +94,15 @@ tracks</a></li>
 <div class="section level3">
 <h3 id="install-packages">Install packages<a class="anchor" aria-label="anchor" href="#install-packages"></a>
 </h3>
-<details><summary><strong>Install analysis-specific packages</strong>
-</summary><p>Install cran dependencies:</p>
+<details><p><summary><strong>Install analysis-specific packages</strong></summary></p>
+<p>Install cran dependencies:</p>
 <ul>
 <li>irlba (PCA)</li>
 <li>uwot (UMAP)</li>
 <li>RcppHNSW (clustering)</li>
 <li>igraph (clustering)</li>
 <li>BiocManager (access bioconductor packages)</li>
-<li>ggplot2 version &lt;=3.3.5 or &gt;=3.4.1 (hexbin was broken for
-versions 3.3.6-3.4.0)</li>
+<li>ggplot2 version &lt;=3.3.5 or &gt;=3.4.1 (hexbin was broken for versions 3.3.6-3.4.0)</li>
 </ul>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"irlba"</span>, <span class="st">"uwot"</span>, <span class="st">"RcppHNSW"</span>, <span class="st">"igraph"</span>, <span class="st">"BiocManager"</span>, <span class="st">"remotes"</span>, <span class="st">"ggplot2"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -121,20 +111,18 @@ versions 3.3.6-3.4.0)</li>
 <li>BSgenome.Hsapiens.UCSC.hg38 (TF motif scanning)</li>
 </ul>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"BSgenome.Hsapiens.UCSC.hg38"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"BSgenome.Hsapiens.UCSC.hg38"</span><span class="op">)</span></span></code></pre></div>
 <p>Github:</p>
 <ul>
 <li>
-<a href="https://github.com/GreenleafLab/motifmatchr" class="external-link">motifmatchr</a> (TF
-motif scanning)</li>
+<a href="https://github.com/GreenleafLab/motifmatchr" class="external-link">motifmatchr</a> (TF motif scanning)</li>
 <li>
-<a href="https://github.com/GreenleafLab/chromVARmotifs" class="external-link">chromVARmotifs</a>
-(TF motif database)</li>
+<a href="https://github.com/GreenleafLab/chromVARmotifs" class="external-link">chromVARmotifs</a> (TF motif database)</li>
 </ul>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"GreenleafLab/motifmatchr"</span>, <span class="st">"GreenleafLab/chromVARmotifs"</span><span class="op">)</span>, repos<span class="op">=</span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/repositories.html" class="external-link">repositories</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-</details><details><summary><strong>Install BPCells</strong>
-</summary><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"GreenleafLab/motifmatchr"</span>, <span class="st">"GreenleafLab/chromVARmotifs"</span><span class="op">)</span>, repos<span class="op">=</span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/repositories.html" class="external-link">repositories</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+</details><details><p><summary><strong>Install BPCells</strong></summary></p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bnprks/BPCells/r"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </details>
 </div>
@@ -155,8 +143,7 @@ motif scanning)</li>
 <div class="section level3">
 <h3 id="download-data">Download data<a class="anchor" aria-label="anchor" href="#download-data"></a>
 </h3>
-<p>Next, we download this <a href="https://www.10xgenomics.com/resources/datasets/pbmc-from-a-healthy-donor-granulocytes-removed-through-cell-sorting-3-k-1-standard-2-0-0" class="external-link">3k
-PBMC dataset</a> from 10x Genomics into a temporary directory.</p>
+<p>Next, we download this <a href="https://www.10xgenomics.com/resources/datasets/pbmc-from-a-healthy-donor-granulocytes-removed-through-cell-sorting-3-k-1-standard-2-0-0" class="external-link">3k PBMC dataset</a> from 10x Genomics into a temporary directory.</p>
 <p>The files are about 500MB large when combined</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">url_base</span> <span class="op">&lt;-</span> <span class="st">"https://cf.10xgenomics.com/samples/cell-arc/2.0.0/pbmc_granulocyte_sorted_3k/"</span></span>
@@ -178,11 +165,8 @@ PBMC dataset</a> from 10x Genomics into a temporary directory.</p>
 <div class="section level2">
 <h2 id="data-loading">Data Loading<a class="anchor" aria-label="anchor" href="#data-loading"></a>
 </h2>
-<p>First, we convert the raw data inputs from a 10x format into a
-bitpacked compressed format stored as binary files on disk.</p>
-<p>BPCells can still read the data if we don’t convert the format, but
-certain ATAC-seq functionality will run much faster on the converted
-data.</p>
+<p>First, we convert the raw data inputs from a 10x format into a bitpacked compressed format stored as binary files on disk.</p>
+<p>BPCells can still read the data if we don’t convert the format, but certain ATAC-seq functionality will run much faster on the converted data.</p>
 <p>Convert the RNA matrix:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Check if we already ran import</span></span>
@@ -202,7 +186,7 @@ data.</p>
 <span><span class="co">## Storage order: column major</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Queued Operations:</span></span>
-<span><span class="co">## 1. Load compressed matrix from directory /home/bparks/dev/github/bnprks/BPCells/r/vignettes/pbmc-3k-data/pbmc_3k_rna_raw</span></span></code></pre>
+<span><span class="co">## 1. Load compressed matrix from directory /home/runner/work/BPCells/BPCells/r/vignettes/pbmc-3k-data/pbmc_3k_rna_raw</span></span></code></pre>
 <p>Convert the ATAC-seq fragments</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Check if we already ran import</span></span>
@@ -219,19 +203,11 @@ data.</p>
 <span><span class="co">## Chromosomes: 39 chromosomes with names chr1, chr10 ... KI270713.1</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Queued Operations:</span></span>
-<span><span class="co">## 1. Read compressed fragments from directory /home/bparks/dev/github/bnprks/BPCells/r/vignettes/pbmc-3k-data/pbmc_3k_frags</span></span></code></pre>
-<details><summary><strong>How much storage space did we save with bitpacking
-compression?</strong>
-</summary><p>ATAC storage space dropped from 468 MB for the gzipped 10x file to
-209 MB for the bitpacked storage.</p>
-<p>RNA storage space dropped from 51.2 MB for the 10x hdf5 file with
-gzip compression to 33.5 MB using bitpacking compression. In this case,
-the storage space is a little misleading since 39% of the bitpacked
-storage is spent on the gene + cell names. In this case both 10x
-compressed hdf5 and bitpacking compression are 4-6x smaller than an
-uncompressed sparse matrix format such as AnnData.</p>
-Aside from compact storage, bitpacking compression also enables very
-fast read speeds which is useful for downstream calculations.
+<span><span class="co">## 1. Read compressed fragments from directory /home/runner/work/BPCells/BPCells/r/vignettes/pbmc-3k-data/pbmc_3k_frags</span></span></code></pre>
+<details><p><summary><strong>How much storage space did we save with bitpacking compression?</strong></summary></p>
+<p>ATAC storage space dropped from 468 MB for the gzipped 10x file to 209 MB for the bitpacked storage.</p>
+<p>RNA storage space dropped from 51.2 MB for the 10x hdf5 file with gzip compression to 33.5 MB using bitpacking compression. In this case, the storage space is a little misleading since 39% of the bitpacked storage is spent on the gene + cell names. In this case both 10x compressed hdf5 and bitpacking compression are 4-6x smaller than an uncompressed sparse matrix format such as AnnData.</p>
+Aside from compact storage, bitpacking compression also enables very fast read speeds which is useful for downstream calculations.
 </details>
 </div>
 <div class="section level2">
@@ -240,9 +216,7 @@ fast read speeds which is useful for downstream calculations.
 <div class="section level3">
 <h3 id="rna-seq-filtering">RNA-seq filtering<a class="anchor" aria-label="anchor" href="#rna-seq-filtering"></a>
 </h3>
-<p>We use a simple minimum read threshold for RNA-seq quality. The
-cutoff we choose is just below the first knee of our log-log plot of
-reads vs. barcode rank, which separates cells from empty droplets.</p>
+<p>We use a simple minimum read threshold for RNA-seq quality. The cutoff we choose is just below the first knee of our log-log plot of reads vs. barcode rank, which separates cells from empty droplets.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">reads_per_cell</span> <span class="op">&lt;-</span> <span class="fu">Matrix</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/colSums-methods.html" class="external-link">colSums</a></span><span class="op">(</span><span class="va">mat_raw</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/plot_read_count_knee.html">plot_read_count_knee</a></span><span class="op">(</span><span class="va">reads_per_cell</span>, cutoff <span class="op">=</span> <span class="fl">1e3</span><span class="op">)</span></span></code></pre></div>
@@ -254,12 +228,8 @@ reads vs. barcode rank, which separates cells from empty droplets.</p>
 <div class="section level4">
 <h4 id="download-reference-annotations">Download reference annotations<a class="anchor" aria-label="anchor" href="#download-reference-annotations"></a>
 </h4>
-<p>We fetch reference information necessary to calculate quality-control
-statistics. By default, this fetches the latest annotations for
-hg38.</p>
-<p>Since fetching the references involves downloading gtf and bed files,
-we provide the name of a directory to save the files in. This also
-allows us to skip re-downloading the same files next time.</p>
+<p>We fetch reference information necessary to calculate quality-control statistics. By default, this fetches the latest annotations for hg38.</p>
+<p>Since fetching the references involves downloading gtf and bed files, we provide the name of a directory to save the files in. This also allows us to skip re-downloading the same files next time.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_gtf.html">read_gencode_transcripts</a></span><span class="op">(</span></span>
 <span>  <span class="st">"./references"</span>, </span>
@@ -307,10 +277,7 @@ allows us to skip re-downloading the same files next time.</p>
 <div class="section level4">
 <h4 id="calculate-atac-seq-quality-control-metrics">Calculate ATAC-seq quality-control metrics<a class="anchor" aria-label="anchor" href="#calculate-atac-seq-quality-control-metrics"></a>
 </h4>
-<p>We can calculate several built-in quality control metrics for each
-barcode, including number of fragments and TSS enrichment. These
-calculations are fully compatible with ArchR’s methodology for quality
-control statistics.</p>
+<p>We can calculate several built-in quality control metrics for each barcode, including number of fragments and TSS enrichment. These calculations are fully compatible with ArchR’s methodology for quality control statistics.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">atac_qc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qc_scATAC.html">qc_scATAC</a></span><span class="op">(</span><span class="va">frags_raw</span>, <span class="va">genes</span>, <span class="va">blacklist</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">atac_qc</span><span class="op">)</span></span></code></pre></div>
@@ -325,52 +292,24 @@ control statistics.</p>
 <span><span class="co">## <span style="color: #BCBCBC;">6</span> CGTTAGGT…        31.5    <span style="text-decoration: underline;">14</span>874           <span style="text-decoration: underline;">6</span>833            <span style="text-decoration: underline;">5</span>405             <span style="text-decoration: underline;">2</span>636</span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 4 more variables: ReadsInTSS &lt;dbl&gt;, ReadsFlankingTSS &lt;dbl&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   ReadsInPromoter &lt;dbl&gt;, ReadsInBlacklist &lt;dbl&gt;</span></span></span></code></pre>
-<p>One of the key ways to identify high-quality cells in ATAC-seq data
-is to plot the number of fragments vs. TSS Enrichment. This plot puts
-empty droplets in the bottom-left quadrant, low-quality/dead cells in
-the bottom-right quadrant, and high-quality cells in the top-right
-quadrant. From a flow-cytometry perspective, we use the bottom-left
-group of empty droplets as a negative control to help set our
-cutoffs.</p>
+<p>One of the key ways to identify high-quality cells in ATAC-seq data is to plot the number of fragments vs. TSS Enrichment. This plot puts empty droplets in the bottom-left quadrant, low-quality/dead cells in the bottom-right quadrant, and high-quality cells in the top-right quadrant. From a flow-cytometry perspective, we use the bottom-left group of empty droplets as a negative control to help set our cutoffs.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_tss_scatter.html">plot_tss_scatter</a></span><span class="op">(</span><span class="va">atac_qc</span>, min_frags<span class="op">=</span><span class="fl">1000</span>, min_tss<span class="op">=</span><span class="fl">10</span><span class="op">)</span></span></code></pre></div>
 <p><img src="pbmc3k_files/figure-html/unnamed-chunk-15-1.png" width="700"></p>
-<details><summary><strong>Why is this TSS Enrichment number different from ArchR?</strong>
-</summary>
-The TSS Enrichment number varies depending on the TSS annotation set
-used, as a stricter definition of what counts as a TSS will tend to give
-higher TSS enrichment. BPCells uses the exact same formula as ArchR to
-calculate TSS enrichment, so if you pass the ArchR TSS set to BPCells
-you’ll get identical results. However, in this case we’ve used a
-somewhat more strict definition of TSS by taking just the MANE select
-transcripts from Gencode.
-</details><details><summary><strong>Why are there no cells in the top-left quadrant?</strong>
-</summary><p>Due to a thresholding that ArchR’s formula applies in the denominator
-of the TSS Enrichment calculation, low-read cells can’t be assigned a
-very high TSS Enrichment value.</p>
-<p>To plot the TSS enrichment without this thresholding, do the
-following:</p>
+<details><summary><strong>Why is this TSS Enrichment number different from ArchR?</strong></summary> The TSS Enrichment number varies depending on the TSS annotation set used, as a stricter definition of what counts as a TSS will tend to give higher TSS enrichment. BPCells uses the exact same formula as ArchR to calculate TSS enrichment, so if you pass the ArchR TSS set to BPCells you’ll get identical results. However, in this case we’ve used a somewhat more strict definition of TSS by taking just the MANE select transcripts from Gencode.
+</details><details><p><summary><strong>Why are there no cells in the top-left quadrant?</strong></summary> Due to a thresholding that ArchR’s formula applies in the denominator of the TSS Enrichment calculation, low-read cells can’t be assigned a very high TSS Enrichment value.</p>
+<p>To plot the TSS enrichment without this thresholding, do the following:</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">atac_qc</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>TSSEnrichment<span class="op">=</span><span class="va">ReadsInTSS</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmax</a></span><span class="op">(</span><span class="fl">1</span>,<span class="va">ReadsFlankingTSS</span><span class="op">)</span> <span class="op">*</span> <span class="fl">200</span><span class="op">/</span><span class="fl">101</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/plot_tss_scatter.html">plot_tss_scatter</a></span><span class="op">(</span>min_frags<span class="op">=</span><span class="fl">2000</span>, min_tss<span class="op">=</span><span class="fl">20</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title<span class="op">=</span><span class="st">"Raw TSS Enrichment"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="pbmc3k_files/figure-html/unnamed-chunk-16-1.png" width="700"></p>
-<p>Note that the <code>200/101</code> fraction accounts for
-<code>ReadsInTSS</code> drawing from 101-bp windows, and
-ReadsFlankingTSS drawing from 2x100-bp windows. This results in more
-low-read droplets measuring high TSS Enrichment, so we use slightly
-adjusted cutoffs.</p>
-ArchR’s formula is equivalent to replacing
-<code>pmax(1,ReadsFlankingTSS)</code> with
-<code>pmax(20,ReadsFlankingTSS)</code> in the above code.
+<p>Note that the <code>200/101</code> fraction accounts for <code>ReadsInTSS</code> drawing from 101-bp windows, and ReadsFlankingTSS drawing from 2x100-bp windows. This results in more low-read droplets measuring high TSS Enrichment, so we use slightly adjusted cutoffs.</p>
+ArchR’s formula is equivalent to replacing <code>pmax(1,ReadsFlankingTSS)</code> with <code>pmax(20,ReadsFlankingTSS)</code> in the above code.
 </details><p>We can also plot some sample-level quality control plots.</p>
-<p>On the left, the fragment length distribution shows three broad bumps
-corresponding to nucleosome spacing (147bp), and smaller wiggles
-corresponding to DNA winding (11.5bp).</p>
-<p>On the right, the TSS enrichment profile shows a strong enrichment of
-signal at transcription start sites, as well as a small asymmetrical
-bump downstream of the TSS after the +1 nucleosome.</p>
+<p>On the left, the fragment length distribution shows three broad bumps corresponding to nucleosome spacing (147bp), and smaller wiggles corresponding to DNA winding (11.5bp).</p>
+<p>On the right, the TSS enrichment profile shows a strong enrichment of signal at transcription start sites, as well as a small asymmetrical bump downstream of the TSS after the +1 nucleosome.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_fragment_length.html">plot_fragment_length</a></span><span class="op">(</span><span class="va">frags_raw</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="../reference/plot_tss_profile.html">plot_tss_profile</a></span><span class="op">(</span><span class="va">frags_raw</span>, <span class="va">genes</span><span class="op">)</span></span></code></pre></div>
 <p><img src="pbmc3k_files/figure-html/unnamed-chunk-17-1.png" width="700"></p>
@@ -379,18 +318,14 @@ bump downstream of the TSS after the +1 nucleosome.</p>
 <div class="section level3">
 <h3 id="select-high-quality-cells">Select high-quality cells<a class="anchor" aria-label="anchor" href="#select-high-quality-cells"></a>
 </h3>
-<p>We take cells that pass our minimum RNA reads, minimum ATAC reads,
-and minimum TSS Enrichment cutoffs.</p>
+<p>We take cells that pass our minimum RNA reads, minimum ATAC reads, and minimum TSS Enrichment cutoffs.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pass_atac</span> <span class="op">&lt;-</span> <span class="va">atac_qc</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">nFrags</span> <span class="op">&gt;</span> <span class="fl">1000</span>, <span class="va">TSSEnrichment</span> <span class="op">&gt;</span> <span class="fl">10</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">cellName</span><span class="op">)</span></span>
 <span><span class="va">pass_rna</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">mat_raw</span><span class="op">)</span><span class="op">[</span><span class="fu">Matrix</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/colSums-methods.html" class="external-link">colSums</a></span><span class="op">(</span><span class="va">mat_raw</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">1e3</span><span class="op">]</span></span>
 <span><span class="va">keeper_cells</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/setops.html" class="external-link">intersect</a></span><span class="op">(</span><span class="va">pass_atac</span>, <span class="va">pass_rna</span><span class="op">)</span></span></code></pre></div>
-<p>We subset the RNA and ATAC input data to just the cells passing
-filter. And for RNA, we subset to genes with at least 3 reads. This
-subset operation also puts the cells in a matching order which
-simplifies cross-modality calculations later on.</p>
+<p>We subset the RNA and ATAC input data to just the cells passing filter. And for RNA, we subset to genes with at least 3 reads. This subset operation also puts the cells in a matching order which simplifies cross-modality calculations later on.</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">frags</span> <span class="op">&lt;-</span> <span class="va">frags_raw</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/select_cells.html">select_cells</a></span><span class="op">(</span><span class="va">keeper_cells</span><span class="op">)</span></span>
 <span></span>
@@ -404,11 +339,8 @@ simplifies cross-modality calculations later on.</p>
 <div class="section level3">
 <h3 id="matrix-normalization">Matrix normalization<a class="anchor" aria-label="anchor" href="#matrix-normalization"></a>
 </h3>
-<p>Here, we walk through the Seurat-style matrix normalization
-calculations manually, though soon there will be helper functions to
-simplify the process.</p>
-<p>First we log-normalize, roughly equivalent to
-<code><a href="https://satijalab.org/seurat/reference/NormalizeData.html" class="external-link">Seurat::NormalizeData</a></code></p>
+<p>Here, we walk through the Seurat-style matrix normalization calculations manually, though soon there will be helper functions to simplify the process.</p>
+<p>First we log-normalize, roughly equivalent to <code>Seurat::NormalizeData</code></p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Normalize by reads-per-cell</span></span>
 <span><span class="va">mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mat_norm.html">multiply_cols</a></span><span class="op">(</span><span class="va">mat</span>, <span class="fl">1</span><span class="op">/</span><span class="fu">Matrix</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/colSums-methods.html" class="external-link">colSums</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span><span class="op">)</span></span>
@@ -425,9 +357,7 @@ simplify the process.</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">mat_norm</span> <span class="op">&lt;-</span> <span class="va">mat</span><span class="op">[</span><span class="va">variable_genes</span>,<span class="op">]</span></span></code></pre></div>
-<p>If we look at our normalized matrix object, we can see we have quite
-a few math operations queued up which are performed on-the-fly as
-needed.</p>
+<p>If we look at our normalized matrix object, we can see we have quite a few math operations queued up which are performed on-the-fly as needed.</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mat_norm</span></span></code></pre></div>
 <pre><code><span><span class="co">## 1000 x 2600 IterableMatrix object with class TransformLog1p</span></span>
@@ -439,24 +369,17 @@ needed.</p>
 <span><span class="co">## Storage order: column major</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Queued Operations:</span></span>
-<span><span class="co">## 1. Load compressed matrix from directory /home/bparks/dev/github/bnprks/BPCells/r/vignettes/pbmc-3k-data/pbmc_3k_rna_raw</span></span>
+<span><span class="co">## 1. Load compressed matrix from directory /home/runner/work/BPCells/BPCells/r/vignettes/pbmc-3k-data/pbmc_3k_rna_raw</span></span>
 <span><span class="co">## 2. Select rows: 87, 171 ... 36568 and cols: 640783, 89020 ... 504383</span></span>
 <span><span class="co">## 3. Convert type from uint32_t to double</span></span>
 <span><span class="co">## 4. Scale by 1e+04</span></span>
 <span><span class="co">## 5. Scale columns by 0.000221, 0.000118 ... 0.000177</span></span>
 <span><span class="co">## 6. Transform log1p</span></span></code></pre>
-<p>To improve performance of the downstream PCA, we save this sparse
-normalized matrix to a temporary file just prior to normalizations that
-would make the matrix dense. This saves storage space while preventing
-us from having to re-calculate the queued operations several-hundred
-times during the PCA optimization iterations.</p>
-<p>In this case, the matrix is quite small so we’ll just store it in
-memory. In a larger example we could swap this for
-<code>write_matrix_dir(tempfile("mat"))</code></p>
+<p>To improve performance of the downstream PCA, we save this sparse normalized matrix to a temporary file just prior to normalizations that would make the matrix dense. This saves storage space while preventing us from having to re-calculate the queued operations several-hundred times during the PCA optimization iterations.</p>
+<p>In this case, the matrix is quite small so we’ll just store it in memory. In a larger example we could swap this for <code>write_matrix_dir(tempfile("mat"))</code></p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mat_norm</span> <span class="op">&lt;-</span> <span class="va">mat_norm</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/matrix_io.html">write_matrix_memory</a></span><span class="op">(</span>compress<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p>Finally, we perform z-score normalization which makes the matrix
-dense.</p>
+<p>Finally, we perform z-score normalization which makes the matrix dense.</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gene_means</span> <span class="op">&lt;-</span> <span class="va">stats</span><span class="op">$</span><span class="va">row_stats</span><span class="op">[</span><span class="st">"mean"</span>,<span class="va">variable_genes</span><span class="op">]</span></span>
 <span><span class="va">gene_vars</span> <span class="op">&lt;-</span> <span class="va">stats</span><span class="op">$</span><span class="va">row_stats</span><span class="op">[</span><span class="st">"variance"</span>, <span class="va">variable_genes</span><span class="op">]</span></span>
@@ -465,10 +388,7 @@ dense.</p>
 <div class="section level3">
 <h3 id="pca-and-umap">PCA and UMAP<a class="anchor" aria-label="anchor" href="#pca-and-umap"></a>
 </h3>
-<p>PCA can be performed with a standard solver like that in
-<code>irlba</code>, though BPCells also provides a C++-level solver
-based on the <code>Spectra</code> package which has built-in
-parallelization support.</p>
+<p>PCA can be performed with a standard solver like that in <code>irlba</code>, though BPCells also provides a C++-level solver based on the <code>Spectra</code> package which has built-in parallelization support.</p>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">svd</span> <span class="op">&lt;-</span> <span class="fu">BPCells</span><span class="fu">::</span><span class="fu"><a href="../reference/svds.html">svds</a></span><span class="op">(</span><span class="va">mat_norm</span>, k<span class="op">=</span><span class="fl">50</span><span class="op">)</span></span>
 <span><span class="co"># Alternate option: irlba::irlba(mat_norm, nv=50)</span></span>
@@ -487,17 +407,16 @@ parallelization support.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">12341512</span><span class="op">)</span></span>
 <span><span class="va">umap</span> <span class="op">&lt;-</span> <span class="fu">uwot</span><span class="fu">::</span><span class="fu"><a href="https://jlmelville.github.io/uwot/reference/umap.html" class="external-link">umap</a></span><span class="op">(</span><span class="va">pca</span><span class="op">)</span></span>
 <span><span class="va">umap</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>,<span class="op">]</span></span></code></pre></div>
-<pre><code><span><span class="co">##           [,1]        [,2]</span></span>
-<span><span class="co">## [1,] 10.508778   2.5891320</span></span>
-<span><span class="co">## [2,] -2.535900 -10.6843586</span></span>
-<span><span class="co">## [3,] 10.467827   2.7659176</span></span>
-<span><span class="co">## [4,]  8.237981   0.4946254</span></span></code></pre>
+<pre><code><span><span class="co">##            [,1]        [,2]</span></span>
+<span><span class="co">## [1,]  9.9284977   2.8806480</span></span>
+<span><span class="co">## [2,] -0.7640393 -11.7900724</span></span>
+<span><span class="co">## [3,]  9.8782410   3.1049877</span></span>
+<span><span class="co">## [4,]  7.7622828   0.5004428</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="clustering">Clustering<a class="anchor" aria-label="anchor" href="#clustering"></a>
 </h3>
-<p>We perform a quick clustering as follows, based on the PCA
-coordinates.</p>
+<p>We perform a quick clustering as follows, based on the PCA coordinates.</p>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">clusts</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/knn.html">knn_hnsw</a></span><span class="op">(</span><span class="va">pca</span>, ef<span class="op">=</span><span class="fl">500</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="co"># Find approximate nearest neighbors</span></span>
 <span>  <span class="fu"><a href="../reference/knn_graph.html">knn_to_snn_graph</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="co"># Convert to a SNN graph</span></span>
@@ -516,8 +435,7 @@ coordinates.</p>
 <div class="section level3">
 <h3 id="visualize-marker-genes">Visualize marker genes<a class="anchor" aria-label="anchor" href="#visualize-marker-genes"></a>
 </h3>
-<p>To annotate our clusters with cell types, we can plot several marker
-genes overlaid onto the UMAP.</p>
+<p>To annotate our clusters with cell types, we can plot several marker genes overlaid onto the UMAP.</p>
 <div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_embedding.html">plot_embedding</a></span><span class="op">(</span></span>
 <span>  source <span class="op">=</span> <span class="va">mat</span>,</span>
@@ -527,9 +445,7 @@ genes overlaid onto the UMAP.</p>
 <span>               <span class="st">"LYZ"</span>, <span class="st">"CD4"</span>,<span class="st">"CD8"</span><span class="op">)</span>,</span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="pbmc3k_files/figure-html/unnamed-chunk-30-1.png" width="960"></p>
-<p>We observe cluster-specific enrichment of B-cell marker MS4A1, T-cell
-marker CD3E, and Monocyte marker LYZ. This allows us to make some broad
-cell type groupings as follows:</p>
+<p>We observe cluster-specific enrichment of B-cell marker MS4A1, T-cell marker CD3E, and Monocyte marker LYZ. This allows us to make some broad cell type groupings as follows:</p>
 <div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cluster_annotations</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">"1"</span> <span class="op">=</span> <span class="st">"T"</span>,</span>
@@ -548,9 +464,7 @@ cell type groupings as follows:</p>
 <span><span class="va">cell_types</span> <span class="op">&lt;-</span> <span class="va">cluster_annotations</span><span class="op">[</span><span class="va">clusts</span><span class="op">]</span></span>
 <span><span class="fu"><a href="../reference/plot_embedding.html">plot_embedding</a></span><span class="op">(</span><span class="va">cell_types</span>, <span class="va">umap</span><span class="op">)</span></span></code></pre></div>
 <p><img src="pbmc3k_files/figure-html/unnamed-chunk-31-1.png" width="700"></p>
-<p>We can further visualize the marker genes for each cluster using a
-dot plot. As is typical for these situations, some known marker genes
-are very clear, while others are less specific.</p>
+<p>We can further visualize the marker genes for each cluster using a dot plot. As is typical for these situations, some known marker genes are very clear, while others are less specific.</p>
 <div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_dot.html">plot_dot</a></span><span class="op">(</span></span>
 <span>  <span class="va">mat</span>, </span>
@@ -565,12 +479,7 @@ are very clear, while others are less specific.</p>
 <div class="section level2">
 <h2 id="atac-normalization-pca-and-umap">ATAC Normalization, PCA and UMAP<a class="anchor" aria-label="anchor" href="#atac-normalization-pca-and-umap"></a>
 </h2>
-<p>We start with tile-based peak calling, which tests pre-determined
-overlapping tile positions for significant enrichment of ATAC-seq signal
-over the genome-wide background in each cell type independently. This is
-faster than using a real peak-caller like MACS, though with the default
-parameters the peaks will always be 200bp wide and the positioning
-resolution is approximately +/- 30bp.</p>
+<p>We start with tile-based peak calling, which tests pre-determined overlapping tile positions for significant enrichment of ATAC-seq signal over the genome-wide background in each cell type independently. This is faster than using a real peak-caller like MACS, though with the default parameters the peaks will always be 200bp wide and the positioning resolution is approximately +/- 30bp.</p>
 <div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">frags_filter_blacklist</span> <span class="op">&lt;-</span> <span class="va">frags</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/select_regions.html">select_regions</a></span><span class="op">(</span><span class="va">blacklist</span>, invert_selection <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
@@ -586,35 +495,20 @@ resolution is approximately +/- 30bp.</p>
 <span><span class="co">## <span style="color: #BCBCBC;">4</span> chr1    1<span style="text-decoration: underline;">724</span>333   1<span style="text-decoration: underline;">724</span>533 Mono  0   <span style="color: #949494;"> </span>     0   <span style="color: #949494;"> </span>           512.</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">5</span> chr1  228<span style="text-decoration: underline;">140</span>000 228<span style="text-decoration: underline;">140</span>200 NK    2.77<span style="color: #949494;">e</span><span style="color: #BB0000;">-162</span> 2.14<span style="color: #949494;">e</span><span style="color: #BB0000;">-155</span>       842.</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">6</span> chr8   30<span style="text-decoration: underline;">083</span>133  30<span style="text-decoration: underline;">083</span>333 CD8 T 4.80<span style="color: #949494;">e</span><span style="color: #BB0000;">-220</span> 7.41<span style="color: #949494;">e</span><span style="color: #BB0000;">-213</span>       744.</span></span></code></pre>
-<p>Next we compute a peak matrix counting how many ATAC-seq insertions
-overlap each peak. We again save it in memory rather than saving it to
-disk since our dataset is quite small.</p>
-<details><summary><strong>Why do we calculate <code>ordered_peaks</code>?</strong>
-</summary>
-For peak matrix calculation to run efficiently, peaks must be sorted in
-order by chromosome and end coordinate. Although
-<code>peak_matrix</code> can automatically reorder the peaks
-appropriately, we show how to perform the sorting manually for this
-example.
+<p>Next we compute a peak matrix counting how many ATAC-seq insertions overlap each peak. We again save it in memory rather than saving it to disk since our dataset is quite small.</p>
+<details><summary><strong>Why do we calculate <code>ordered_peaks</code>?</strong></summary> For peak matrix calculation to run efficiently, peaks must be sorted in order by chromosome and end coordinate. Although <code>peak_matrix</code> can automatically reorder the peaks appropriately, we show how to perform the sorting manually for this example.
 </details><div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">top_peaks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">peaks</span>, <span class="fl">50000</span><span class="op">)</span></span>
 <span><span class="va">top_peaks</span> <span class="op">&lt;-</span> <span class="va">top_peaks</span><span class="op">[</span><span class="fu"><a href="../reference/order_ranges.html">order_ranges</a></span><span class="op">(</span><span class="va">top_peaks</span>, <span class="fu"><a href="../reference/IterableFragments-methods.html">chrNames</a></span><span class="op">(</span><span class="va">frags</span><span class="op">)</span><span class="op">)</span>,<span class="op">]</span></span>
 <span><span class="va">peak_mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/peak_matrix.html">peak_matrix</a></span><span class="op">(</span><span class="va">frags</span>, <span class="va">top_peaks</span>, mode<span class="op">=</span><span class="st">"insertions"</span><span class="op">)</span></span></code></pre></div>
-<p>Next we calculate the TF-IDF normalization. This formula is the
-TF-IDF variant from Stuart et al.</p>
+<p>Next we calculate the TF-IDF normalization. This formula is the TF-IDF variant from Stuart et al.</p>
 <div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mat_lsi</span> <span class="op">&lt;-</span> <span class="va">peak_mat</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/mat_norm.html">multiply_cols</a></span><span class="op">(</span><span class="fl">1</span> <span class="op">/</span> <span class="fu">Matrix</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/colSums-methods.html" class="external-link">colSums</a></span><span class="op">(</span><span class="va">peak_mat</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/mat_norm.html">multiply_rows</a></span><span class="op">(</span><span class="fl">1</span> <span class="op">/</span> <span class="fu">Matrix</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/colSums-methods.html" class="external-link">rowMeans</a></span><span class="op">(</span><span class="va">peak_mat</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">mat_lsi</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log1p</a></span><span class="op">(</span><span class="fl">10000</span> <span class="op">*</span> <span class="va">mat_lsi</span><span class="op">)</span></span></code></pre></div>
-<p>Looking at this LSI matrix, we can see the power of BPCells
-performing matrix operations on-the-fly: the LSI normalization is in
-fact calculated at the same time as the fragment overlap calculations
-when we read this matrix. We don’t need to store any intermediate
-matrices during these calculations, and even the peak matrix can be
-re-calculated on-the-fly based on the fragments object saved to
-disk.</p>
+<p>Looking at this LSI matrix, we can see the power of BPCells performing matrix operations on-the-fly: the LSI normalization is in fact calculated at the same time as the fragment overlap calculations when we read this matrix. We don’t need to store any intermediate matrices during these calculations, and even the peak matrix can be re-calculated on-the-fly based on the fragments object saved to disk.</p>
 <div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mat_lsi</span></span></code></pre></div>
 <pre><code><span><span class="co">## 50000 x 2600 IterableMatrix object with class TransformLog1p</span></span>
@@ -626,7 +520,7 @@ disk.</p>
 <span><span class="co">## Storage order: row major</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Queued Operations:</span></span>
-<span><span class="co">## 1. Read compressed fragments from directory /home/bparks/dev/github/bnprks/BPCells/r/vignettes/pbmc-3k-data/pbmc_3k_frags</span></span>
+<span><span class="co">## 1. Read compressed fragments from directory /home/runner/work/BPCells/BPCells/r/vignettes/pbmc-3k-data/pbmc_3k_frags</span></span>
 <span><span class="co">## 2. Select 2600 cells by name: TTTAGCAAGGTAGCTT-1, AGCCGGTTCCGGAACC-1 ... TACTAAGTCCAATAGC-1</span></span>
 <span><span class="co">## 3. Calculate 2600 peaks over 50000 ranges: chr1:817201-817400 ... chrX:155881201-155881400</span></span>
 <span><span class="co">## 4. Convert type from uint32_t to double</span></span>
@@ -634,18 +528,11 @@ disk.</p>
 <span><span class="co">## 6. Scale columns by 6.71e-05, 5.17e-05 ... 0.000801</span></span>
 <span><span class="co">## 7. Scale rows by 11.1, 2.78 ... 3.77</span></span>
 <span><span class="co">## 8. Transform log1p</span></span></code></pre>
-<p>Just like for the RNA, we save our matrix before running PCA. On a
-larger dataset, we would save to disk rather than to memory.</p>
+<p>Just like for the RNA, we save our matrix before running PCA. On a larger dataset, we would save to disk rather than to memory.</p>
 <div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mat_lsi</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/matrix_io.html">write_matrix_memory</a></span><span class="op">(</span><span class="va">mat_lsi</span>, compress<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p>Finally, we will do a z-score normalization on the LSI matrix then
-run PCA. This is standard practice for running a PCA, but is not
-commonly done on ATAC-seq datasets due to the fact that it greatly
-increases memory usage. In other methods, the 1st PC is highly
-correlated to the number of reads per cell, and is thrown out as an
-empirical correction.</p>
-<p>Luckily, BPCells can avoid this memory usage so we can just normalize
-our data and run PCA as usual</p>
+<p>Finally, we will do a z-score normalization on the LSI matrix then run PCA. This is standard practice for running a PCA, but is not commonly done on ATAC-seq datasets due to the fact that it greatly increases memory usage. In other methods, the 1st PC is highly correlated to the number of reads per cell, and is thrown out as an empirical correction.</p>
+<p>Luckily, BPCells can avoid this memory usage so we can just normalize our data and run PCA as usual</p>
 <div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Compute colMean and colVariance in one pass</span></span>
 <span><span class="va">cell_peak_stats</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/matrix_stats.html">matrix_stats</a></span><span class="op">(</span><span class="va">mat_lsi</span>, col_stats<span class="op">=</span><span class="st">"variance"</span><span class="op">)</span><span class="op">$</span><span class="va">col_stats</span></span>
@@ -668,38 +555,29 @@ our data and run PCA as usual</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">12341512</span><span class="op">)</span></span>
 <span><span class="va">umap_atac</span> <span class="op">&lt;-</span> <span class="fu">uwot</span><span class="fu">::</span><span class="fu"><a href="https://jlmelville.github.io/uwot/reference/umap.html" class="external-link">umap</a></span><span class="op">(</span><span class="va">pca_atac</span><span class="op">)</span></span>
 <span><span class="va">umap_atac</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>,<span class="op">]</span></span></code></pre></div>
-<pre><code><span><span class="co">##           [,1]      [,2]</span></span>
-<span><span class="co">## [1,]  5.688197  4.907162</span></span>
-<span><span class="co">## [2,] -7.024763 -1.397809</span></span>
-<span><span class="co">## [3,]  9.102351  9.084071</span></span>
-<span><span class="co">## [4,]  3.094332  2.552042</span></span></code></pre>
+<pre><code><span><span class="co">##          [,1]       [,2]</span></span>
+<span><span class="co">## [1,] 5.373091 4.89955309</span></span>
+<span><span class="co">## [2,] 5.877373 0.02786908</span></span>
+<span><span class="co">## [3,] 3.587686 9.50913885</span></span>
+<span><span class="co">## [4,] 8.177915 2.71881917</span></span></code></pre>
 <p>Then we cluster, just like for the RNA</p>
 <div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">clusts_atac</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/knn.html">knn_hnsw</a></span><span class="op">(</span><span class="va">pca_atac</span>, ef<span class="op">=</span><span class="fl">500</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="co"># Find approximate nearest neighbors</span></span>
 <span>  <span class="fu"><a href="../reference/knn_graph.html">knn_to_snn_graph</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="co"># Convert to a SNN graph</span></span>
 <span>  <span class="fu"><a href="../reference/cluster.html">cluster_graph_louvain</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># Perform graph-based clustering</span></span></code></pre></div>
-<p>And we can plot our ATAC-seq embedding with ATAC-derived clusters,
-and easily compare that to the RNA-derived clusters from earlier.</p>
+<p>And we can plot our ATAC-seq embedding with ATAC-derived clusters, and easily compare that to the RNA-derived clusters from earlier.</p>
 <div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_embedding.html">plot_embedding</a></span><span class="op">(</span><span class="va">clusts_atac</span>, <span class="va">umap_atac</span>, colors_discrete <span class="op">=</span> <span class="fu"><a href="../reference/palettes.html">discrete_palette</a></span><span class="op">(</span><span class="st">"ironMan"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guides.html" class="external-link">guides</a></span><span class="op">(</span>color<span class="op">=</span><span class="st">"none"</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="../reference/plot_embedding.html">plot_embedding</a></span><span class="op">(</span><span class="va">cell_types</span>, <span class="va">umap_atac</span><span class="op">)</span></span></code></pre></div>
 <p><img src="pbmc3k_files/figure-html/unnamed-chunk-42-1.png" width="700"></p>
-<details><summary><strong>How did we combine the RNA clusters with the ATAC data?</strong>
-</summary><p>BPCells works based on the order of cells in a matrix or fragment
-object. Since our ATAC PCA rows are in the same cell order as our RNA
-clusters, the datasets combine with no additional work.</p>
-It does take some effort at the beginning of your analysis to make sure
-the cell orders are consistent, which is what we did in our <a href="#select-high-quality-cells">cell filtering</a> step. But after
-ordering the input RNA matrix and ATAC fragments, all downstream
-calculations should maintain the same cell ordering by default.
-</details><details><summary><strong>What if we skip z-score normalization on the LSI
-matrix?</strong>
-</summary><div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
+<details><p><summary><strong>How did we combine the RNA clusters with the ATAC data?</strong></summary> BPCells works based on the order of cells in a matrix or fragment object. Since our ATAC PCA rows are in the same cell order as our RNA clusters, the datasets combine with no additional work.</p>
+It does take some effort at the beginning of your analysis to make sure the cell orders are consistent, which is what we did in our <a href="#select-high-quality-cells">cell filtering</a> step. But after ordering the input RNA matrix and ATAC fragments, all downstream calculations should maintain the same cell ordering by default.
+</details><details><p><summary><strong>What if we skip z-score normalization on the LSI matrix?</strong></summary></p>
+<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">svd_atac_no_norm</span> <span class="op">&lt;-</span> <span class="fu">BPCells</span><span class="fu">::</span><span class="fu"><a href="../reference/svds.html">svds</a></span><span class="op">(</span><span class="va">mat_lsi</span>, k<span class="op">=</span><span class="fl">10</span><span class="op">)</span></span>
 <span><span class="va">pca_atac_no_norm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mat_norm.html">multiply_cols</a></span><span class="op">(</span><span class="va">svd_atac_no_norm</span><span class="op">$</span><span class="va">v</span>, <span class="va">svd_atac</span><span class="op">$</span><span class="va">d</span><span class="op">)</span></span></code></pre></div>
-<p>If we skip normalization, we first observe that we get very high
-correlation of our first PC to the reads-per-cell in our peak matrix</p>
+<p>If we skip normalization, we first observe that we get very high correlation of our first PC to the reads-per-cell in our peak matrix</p>
 <div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cor_to_depth</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span></span>
 <span>  <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span></span>
@@ -718,11 +596,7 @@ correlation of our first PC to the reads-per-cell in our peak matrix</p>
 <span>  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title<span class="op">=</span><span class="st">"Correlation to of PCs to read depth"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="pbmc3k_files/figure-html/unnamed-chunk-44-1.png" width="700"></p>
-<p>In terms of the actual PCA results, we can see that the cell
-embeddings have mostly 1-to-1 correspondence across the first 6 PCs,
-though later PCs start to diverge. The first PC of the raw TF-IDF
-corresponds mostly to read depth, and the signal is spread out across 2
-PCs in the z-score normalized variant.</p>
+<p>In terms of the actual PCA results, we can see that the cell embeddings have mostly 1-to-1 correspondence across the first 6 PCs, though later PCs start to diverge. The first PC of the raw TF-IDF corresponds mostly to read depth, and the signal is spread out across 2 PCs in the z-score normalized variant.</p>
 <div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cor_between_embeddings</span> <span class="op">&lt;-</span> <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/expand_grid.html" class="external-link">expand_grid</a></span><span class="op">(</span></span>
 <span>  pca_atac_no_norm <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">pca_atac_no_norm</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -741,8 +615,7 @@ PCs in the z-score normalized variant.</p>
 <span>                x<span class="op">=</span><span class="st">"z-score normalize PCs"</span>,</span>
 <span>                y <span class="op">=</span><span class="st">"raw TF-IDF PCs"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="pbmc3k_files/figure-html/unnamed-chunk-45-1.png" width="700"></p>
-<p>And if we look at the loading on each peak from the PCA, we see a
-similar result.</p>
+<p>And if we look at the loading on each peak from the PCA, we see a similar result.</p>
 <div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cor_between_loadings</span> <span class="op">&lt;-</span> <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/expand_grid.html" class="external-link">expand_grid</a></span><span class="op">(</span></span>
 <span>  pca_atac_no_norm <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">svd_atac_no_norm</span><span class="op">$</span><span class="va">u</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -761,9 +634,7 @@ similar result.</p>
 <span>                x<span class="op">=</span><span class="st">"z-score normalize PCs"</span>,</span>
 <span>                y <span class="op">=</span><span class="st">"raw TF-IDF PCs"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="pbmc3k_files/figure-html/unnamed-chunk-46-1.png" width="700"></p>
-<p>Finally, the UMAP generated once we exclude the first PC is fairly
-similar, though with a notable difference in positioning for some of the
-dendritic cells</p>
+<p>Finally, the UMAP generated once we exclude the first PC is fairly similar, though with a notable difference in positioning for some of the dendritic cells</p>
 <div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">12341512</span><span class="op">)</span></span>
 <span><span class="va">umap_atac_no_norm</span> <span class="op">&lt;-</span> <span class="fu">uwot</span><span class="fu">::</span><span class="fu"><a href="https://jlmelville.github.io/uwot/reference/umap.html" class="external-link">umap</a></span><span class="op">(</span><span class="va">pca_atac_no_norm</span><span class="op">[</span>,<span class="op">-</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span>
@@ -776,8 +647,7 @@ dendritic cells</p>
 <div class="section level2">
 <h2 id="motif-footprinting">Motif footprinting<a class="anchor" aria-label="anchor" href="#motif-footprinting"></a>
 </h2>
-<p>For motif footprinting, first we need to find all instances of our
-motifs-of-interest in peaks</p>
+<p>For motif footprinting, first we need to find all instances of our motifs-of-interest in peaks</p>
 <div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="op">{</span></span>
 <span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/GenomicRanges" class="external-link">GenomicRanges</a></span><span class="op">)</span></span>
@@ -819,15 +689,7 @@ motifs-of-interest in peaks</p>
 <span><span class="co">## </span></span>
 <span><span class="co">## ...</span></span>
 <span><span class="co">## &lt;3 more elements&gt;</span></span></code></pre>
-<p>Next, we can use these motif positions to plot aggregate
-accessibility surrounding TF binding sites across our cell types as a
-proxy for TF activity. Here we’re able to see enrichment of
-accessibility neighboring the sites of a myeloid transcription factor in
-our DC and Monocyte cells. Transcription factor binding is (generally)
-mutually-exclusive with nucleosome occupancy, so the transcription
-factor is bound it creates accessibility in its flanking regions. The
-squiggly bit in the center is due to Tn5 insertion bias of the motif
-itself.</p>
+<p>Next, we can use these motif positions to plot aggregate accessibility surrounding TF binding sites across our cell types as a proxy for TF activity. Here we’re able to see enrichment of accessibility neighboring the sites of a myeloid transcription factor in our DC and Monocyte cells. Transcription factor binding is (generally) mutually-exclusive with nucleosome occupancy, so the transcription factor is bound it creates accessibility in its flanking regions. The squiggly bit in the center is due to Tn5 insertion bias of the motif itself.</p>
 <div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_tf_footprint.html">plot_tf_footprint</a></span><span class="op">(</span></span>
 <span>  <span class="va">frags</span>,</span>
@@ -838,9 +700,7 @@ itself.</p>
 <span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title<span class="op">=</span><span class="st">"CEBPA"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="pbmc3k_files/figure-html/unnamed-chunk-49-1.png" width="700"></p>
-<p>We can also use the <code>patchwork</code> library to show multiple
-plots in a grid, highlighting cell-type-specific factors as well as
-general factors like CTCF.</p>
+<p>We can also use the <code>patchwork</code> library to show multiple plots in a grid, highlighting cell-type-specific factors as well as general factors like CTCF.</p>
 <div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">footprinting_plots</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="kw">for</span> <span class="op">(</span><span class="va">motif</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">selected_motifs</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
@@ -858,9 +718,7 @@ general factors like CTCF.</p>
 <div class="section level2">
 <h2 id="genome-accessibility-tracks">Genome accessibility tracks<a class="anchor" aria-label="anchor" href="#genome-accessibility-tracks"></a>
 </h2>
-<p>To plot genome accessibility tracks, we need to select a genome
-region to view. BPCells provides a helper function to find genome
-regions centered around a gene.</p>
+<p>To plot genome accessibility tracks, we need to select a genome region to view. BPCells provides a helper function to find genome regions centered around a gene.</p>
 <div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">region</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gene_region.html">gene_region</a></span><span class="op">(</span><span class="va">genes</span>, <span class="st">"CD19"</span>, extend_bp <span class="op">=</span> <span class="fl">1e5</span><span class="op">)</span></span>
 <span><span class="va">region</span></span></code></pre></div>
@@ -872,17 +730,12 @@ regions centered around a gene.</p>
 <span><span class="co">## </span></span>
 <span><span class="co">## $end</span></span>
 <span><span class="co">## [1] 29039342</span></span></code></pre>
-<p>For normalizing the tracks, we need to provide the total number of
-reads for each cell type. This can be substituted for total reads in
-peaks or other metrics if desired.</p>
+<p>For normalizing the tracks, we need to provide the total number of reads for each cell type. This can be substituted for total reads in peaks or other metrics if desired.</p>
 <div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">read_counts</span> <span class="op">&lt;-</span> <span class="va">atac_qc</span><span class="op">$</span><span class="va">nFrags</span><span class="op">[</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/match.html" class="external-link">match</a></span><span class="op">(</span><span class="fu"><a href="../reference/IterableFragments-methods.html">cellNames</a></span><span class="op">(</span><span class="va">frags</span><span class="op">)</span>, <span class="va">atac_qc</span><span class="op">$</span><span class="va">cellName</span><span class="op">)</span></span>
 <span><span class="op">]</span></span></code></pre></div>
-<p>We can create the first component of our track plot by plotting the
-genome tracks themselves. We can see a small peak in the center that is
-mainly present in B cells (top row), but it is unclear where this sits
-relative to the B-cell marker CD19.</p>
+<p>We can create the first component of our track plot by plotting the genome tracks themselves. We can see a small peak in the center that is mainly present in B cells (top row), but it is unclear where this sits relative to the B-cell marker CD19.</p>
 <div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">coverage_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/trackplot_coverage.html">trackplot_coverage</a></span><span class="op">(</span></span>
 <span>  <span class="va">frags</span>,</span>
@@ -893,9 +746,7 @@ relative to the B-cell marker CD19.</p>
 <span><span class="op">)</span></span>
 <span><span class="va">coverage_plot</span></span></code></pre></div>
 <p><img src="pbmc3k_files/figure-html/unnamed-chunk-53-1.png" width="700"></p>
-<p>This is much more useful with a gene annotation track added in. For
-this we’ll get a set of canonical transcripts (one per gene) from
-Gencode</p>
+<p>This is much more useful with a gene annotation track added in. For this we’ll get a set of canonical transcripts (one per gene) from Gencode</p>
 <div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">transcripts</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_gtf.html">read_gencode_transcripts</a></span><span class="op">(</span><span class="st">"./references"</span>, release<span class="op">=</span><span class="st">"42"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">transcripts</span><span class="op">)</span></span></code></pre></div>
@@ -919,9 +770,7 @@ Gencode</p>
 <code class="sourceCode R"><span><span class="va">scalebar_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/trackplot_scalebar.html">trackplot_scalebar</a></span><span class="op">(</span><span class="va">region</span><span class="op">)</span></span>
 <span><span class="va">scalebar_plot</span></span></code></pre></div>
 <p><img src="pbmc3k_files/figure-html/unnamed-chunk-56-1.png" width="576"></p>
-<p>Finally, we can stack these elements with
-<code><a href="../reference/trackplot_combine.html">trackplot_combine()</a></code>. Now we see that the small peak is just
-upstream of the CD19 gene.</p>
+<p>Finally, we can stack these elements with <code><a href="../reference/trackplot_combine.html">trackplot_combine()</a></code>. Now we see that the small peak is just upstream of the CD19 gene.</p>
 <div class="sourceCode" id="cb73"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># We list plots in order from top to bottom to combine.</span></span>
 <span></span>
@@ -947,7 +796,7 @@ upstream of the CD19 gene.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer>

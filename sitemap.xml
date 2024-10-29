@@ -8,6 +8,7 @@
 <url><loc>https://bnprks.github.io/BPCells/articles/web-only/how-it-works.html</loc></url>
 <url><loc>https://bnprks.github.io/BPCells/articles/web-only/programming-efficiency.html</loc></url>
 <url><loc>https://bnprks.github.io/BPCells/articles/web-only/programming-philosophy.html</loc></url>
+<url><loc>https://bnprks.github.io/BPCells/articles/web-only/test_extra_document.html</loc></url>
 <url><loc>https://bnprks.github.io/BPCells/authors.html</loc></url>
 <url><loc>https://bnprks.github.io/BPCells/index.html</loc></url>
 <url><loc>https://bnprks.github.io/BPCells/news/index.html</loc></url>
@@ -19,7 +20,7 @@
 <url><loc>https://bnprks.github.io/BPCells/reference/all_matrix_inputs.html</loc></url>
 <url><loc>https://bnprks.github.io/BPCells/reference/apply_by_row.html</loc></url>
 <url><loc>https://bnprks.github.io/BPCells/reference/binarize.html</loc></url>
-<url><loc>https://bnprks.github.io/BPCells/reference/call_macs_peaks.html</loc></url>
+<url><loc>https://bnprks.github.io/BPCells/reference/call_peaks_macs.html</loc></url>
 <url><loc>https://bnprks.github.io/BPCells/reference/call_peaks_tile.html</loc></url>
 <url><loc>https://bnprks.github.io/BPCells/reference/checksum.html</loc></url>
 <url><loc>https://bnprks.github.io/BPCells/reference/cluster.html</loc></url>
@@ -77,6 +78,7 @@
 <url><loc>https://bnprks.github.io/BPCells/reference/plot_tss_profile.html</loc></url>
 <url><loc>https://bnprks.github.io/BPCells/reference/plot_tss_scatter.html</loc></url>
 <url><loc>https://bnprks.github.io/BPCells/reference/prefix_cell_names.html</loc></url>
+<url><loc>https://bnprks.github.io/BPCells/reference/pseudobulk_matrix.html</loc></url>
 <url><loc>https://bnprks.github.io/BPCells/reference/qc_scATAC.html</loc></url>
 <url><loc>https://bnprks.github.io/BPCells/reference/range_distance_to_nearest.html</loc></url>
 <url><loc>https://bnprks.github.io/BPCells/reference/rank_transform.html</loc></url>
