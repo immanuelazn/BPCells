@@ -59,8 +59,7 @@
 
 
 
-
-<div class="row">
+<script src="how-it-works_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>How BPCells works</h1>
@@ -75,23 +74,13 @@
 <div class="section level2">
 <h2 id="operating-principles">Operating Principles<a class="anchor" aria-label="anchor" href="#operating-principles"></a>
 </h2>
-<p>Two key principles to understand about using BPCells is that all
-operations are <em>streaming</em> and <em>lazy</em>.</p>
-<p>Streaming means that only a minimal amount of data is stored in
-memory while a computation is happening. There is almost no memory used
-storing intermediate results. Hence, we can compute operations on large
-matrices without ever loading them fully into memory.</p>
-<p>Lazy means that no real work is performed on matrix or fragment
-objects until the result needs to be returned as an R object or written
-to disk. This helps support the streaming computation, since otherwise
-we would be forced to compute intermediate results and use additional
-memory.</p>
+<p>Two key principles to understand about using BPCells is that all operations are <em>streaming</em> and <em>lazy</em>.</p>
+<p>Streaming means that only a minimal amount of data is stored in memory while a computation is happening. There is almost no memory used storing intermediate results. Hence, we can compute operations on large matrices without ever loading them fully into memory.</p>
+<p>Lazy means that no real work is performed on matrix or fragment objects until the result needs to be returned as an R object or written to disk. This helps support the streaming computation, since otherwise we would be forced to compute intermediate results and use additional memory.</p>
 <div class="section level3">
 <h3 id="basic-usage">Basic usage<a class="anchor" aria-label="anchor" href="#basic-usage"></a>
 </h3>
-<p>We begin with a basic example of loading ATAC fragments from a 10x
-fragments file, reading a peak set from a bed file, then calculating a
-cell x peak matrix.</p>
+<p>We begin with a basic example of loading ATAC fragments from a 10x fragments file, reading a peak set from a bed file, then calculating a cell x peak matrix.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://bnprks.github.io/BPCells">"BPCells"</a></span><span class="op">)</span></span>
 <span></span>
@@ -101,8 +90,7 @@ cell x peak matrix.</p>
 <span><span class="co"># This is when we actually read the file, should take 1-2 minutes to scan</span></span>
 <span><span class="co"># since we bottleneck on gzip decompression.</span></span>
 <span><span class="va">packed_fragments</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/fragment_io.html">write_fragments_dir</a></span><span class="op">(</span><span class="va">fragments</span>, <span class="st">"pbmc-3k-fragments"</span><span class="op">)</span></span></code></pre></div>
-<p>The bitpacked compressed fragment file is about half the size of the
-10x file, and much faster to read.</p>
+<p>The bitpacked compressed fragment file is about half the size of the 10x file, and much faster to read.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Later, we can re-open these fragments</span></span>
 <span><span class="va">packed_fragments</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/fragment_io.html">open_fragments_dir</a></span><span class="op">(</span><span class="st">"pbmc-3k_fragments"</span><span class="op">)</span></span>
@@ -120,21 +108,10 @@ cell x peak matrix.</p>
 <div class="section level3">
 <h3 id="streaming-operations">Streaming operations<a class="anchor" aria-label="anchor" href="#streaming-operations"></a>
 </h3>
-<p>The lazy, stream-oriented design means that we can calculate more
-complicated transformations in a single pass. This is both faster and
-more memory-efficient than calculating several intermediate results in a
-sequential manner.</p>
-<p>As an example, we will perform the following pipeline: 1. Exclude
-fragments from non-standard chromosomes 2. Subset our cells 3. Add a Tn5
-offset 4. Calculate the peak matrix 5. Calculate the mean-accessibility
-per peak</p>
-<p>If this were done using e.g. GRanges or sparse matrices, we would
-need to do 3 passes through the fragments while saving intermediate
-results, and 2 passes over the peak matrix.</p>
-<p>With BPCell’s streaming operations, this can all be done directly
-from the fragments in a single pass, and the memory usage is limited to
-a few bytes per cell for iterating over the peak matrix and returning
-the colMeans.</p>
+<p>The lazy, stream-oriented design means that we can calculate more complicated transformations in a single pass. This is both faster and more memory-efficient than calculating several intermediate results in a sequential manner.</p>
+<p>As an example, we will perform the following pipeline: 1. Exclude fragments from non-standard chromosomes 2. Subset our cells 3. Add a Tn5 offset 4. Calculate the peak matrix 5. Calculate the mean-accessibility per peak</p>
+<p>If this were done using e.g. GRanges or sparse matrices, we would need to do 3 passes through the fragments while saving intermediate results, and 2 passes over the peak matrix.</p>
+<p>With BPCell’s streaming operations, this can all be done directly from the fragments in a single pass, and the memory usage is limited to a few bytes per cell for iterating over the peak matrix and returning the colMeans.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Here I make use of the new pipe operator |&gt; for better readability</span></span>
 <span></span>
@@ -154,11 +131,7 @@ the colMeans.</p>
 <span>  <span class="fu"><a href="../../reference/shift_fragments.html">shift_fragments</a></span><span class="op">(</span>shift_start<span class="op">=</span><span class="fl">4</span>, shift_end<span class="op">=</span><span class="op">-</span><span class="fl">5</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../../reference/peak_matrix.html">peak_matrix</a></span><span class="op">(</span><span class="va">peaks</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">colMeans</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p>Note that if we knew the cell names ahead of time, we could even
-perform this operation directly on our orignal 10x fragments without
-ever saving the fragments into memory. This would be fairly slow because
-10x fragment files are slow to decompress, so it’s recommended to
-convert to the BPCells format.</p>
+<p>Note that if we knew the cell names ahead of time, we could even perform this operation directly on our orignal 10x fragments without ever saving the fragments into memory. This would be fairly slow because 10x fragment files are slow to decompress, so it’s recommended to convert to the BPCells format.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -172,7 +145,7 @@ convert to the BPCells format.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer>
