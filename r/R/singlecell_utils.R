@@ -292,6 +292,30 @@ project.default <- function(x, mat, ...) {
   rlang::abort("project method not implemented for objects that are not a fitted DimReduction")
 }
 
+#' @export
+print.DimReduction <- function(x, ...) {
+  cat(sprintf("Fitted <%s> dimensionality reduction\n\n", class(x)[1]))
+  # Print dimension of embeddings
+  dim_embeddings <- dim(x$cell_embeddings)
+  cat(sprintf("cell_embeddings: %d cells x %d embedding dimensions\n", dim_embeddings[1], dim_embeddings[2]))
+  # Print input feature info, with line break every 5 vals
+  feat_str <- paste(utils::head(x$feature_names, 5), collapse = ", ")
+  wrapped_feats <- strwrap(feat_str, width = getOption("width") - 6) 
+  cat("Input feature names:\n")
+  for (ln in wrapped_feats) {
+    cat("  ", ln, "\n", sep = "")
+  }
+
+  # Wrap and print fitted_params names
+  param_names <- names(x$fitted_params)
+  params_str <- paste(param_names, collapse = ", ")
+  wrapped_params <- strwrap(params_str, width = getOption("width") - 6)
+  cat("Fitted_params:\n")
+  for (ln in wrapped_params) {
+    cat("  ", ln, "\n", sep = "")
+  }
+}
+
 #################
 # LSI Implementation
 #################
@@ -336,6 +360,7 @@ project.default <- function(x, mat, ...) {
 #' ## LSI() example
 #' #######################################################################
 #' lsi_result <- LSI(mat, n_dimensions = 10)
+#' lsi_result
 #' 
 #' 
 #' @export
@@ -438,6 +463,7 @@ project.LSI <- function(x, mat, threads = 1L, ...) {
 }
 
 
+
 #' Run Iterative LSI on a matrix.
 #' 
 #' Given a `(features x cells)` counts matrix, perform IterativeLSI to create a latent space representation of the matrix of shape `(n_dimensions, ncol(mat))`.  
@@ -512,7 +538,7 @@ project.LSI <- function(x, mat, threads = 1L, ...) {
 #' 
 #' 
 #' #######################################################################
-#' ## IterativeLSI() examples
+#' ## IterativeLSI() examples 
 #' #######################################################################
 #' dim_reduction <- IterativeLSI(mat, n_dimensions = 5)
 #' 
@@ -529,6 +555,7 @@ project.LSI <- function(x, mat, threads = 1L, ...) {
 #'     knn_to_graph_method = knn_to_snn_graph
 #'   )
 #' )
+#' dim_reduction
 #' 
 #' 
 #' @export
