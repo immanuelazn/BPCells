@@ -295,25 +295,23 @@ project.default <- function(x, mat, ...) {
 #' @export
 print.DimReduction <- function(x, ...) {
   cat(sprintf("Fitted <%s> dimensionality reduction\n\n", class(x)[1]))
-  # Print dimension of embeddings
+  
+  # Print feature info
+  cat("Number of features:", length(x$feature_names), "\n") 
+  cat("Input feature names:", pretty_print_vector(x$feature_names), "\n")
+
+  # Print embedding info
   dim_embeddings <- dim(x$cell_embeddings)
   cat(sprintf("cell_embeddings: %d cells x %d embedding dimensions\n", dim_embeddings[1], dim_embeddings[2]))
-  # Print input feature info, with line break every 5 vals
-  feat_str <- paste(utils::head(x$feature_names, 5), collapse = ", ")
-  wrapped_feats <- strwrap(feat_str, width = getOption("width") - 6) 
-  cat("Input feature names:\n")
-  for (ln in wrapped_feats) {
-    cat("  ", ln, "\n", sep = "")
-  }
 
-  # Wrap and print fitted_params names
-  param_names <- names(x$fitted_params)
-  params_str <- paste(param_names, collapse = ", ")
-  wrapped_params <- strwrap(params_str, width = getOption("width") - 6)
-  cat("Fitted_params:\n")
-  for (ln in wrapped_params) {
-    cat("  ", ln, "\n", sep = "")
-  }
+  # Print param info
+  # params_str <- paste(names(x$fitted_params), collapse = ", ")
+  # wrapped_params <- strwrap(params_str, width = getOption("width") - 6)
+  # cat("Fitted_params:\n")
+  # for (ln in wrapped_params) {
+  #   cat("  ", ln, "\n", sep = "")
+  # }
+  cat("fitted_params: ", stringr::str_wrap(paste(names(x$fitted_params), collapse = ", "), exdent = 2, width = 60), "\n")
 }
 
 #################
@@ -357,7 +355,7 @@ print.DimReduction <- function(x, ...) {
 #' 
 #' 
 #' #######################################################################
-#' ## LSI() example
+#' ## LSI() example 
 #' #######################################################################
 #' lsi_result <- LSI(mat, n_dimensions = 10)
 #' lsi_result
@@ -431,7 +429,7 @@ LSI <- function(
 #' @inheritParams project
 #' @examples
 #' #######################################################################
-#' ## project(<LSI>) example
+#' ## project(<LSI>) example 
 #' #######################################################################
 #' dim(project(lsi_result, mat))
 #' 
@@ -530,15 +528,15 @@ project.LSI <- function(x, mat, threads = 1L, ...) {
 #' @inheritParams LSI
 #' @examples
 #' ## Prep data
-#' nrows <- 500
-#' ncols <- 10000
+#' nrows <- 350
+#' ncols <- 2000
 #' mat <- matrix(1:(nrows*ncols), nrow = nrows) %>% as("IterableMatrix")
 #' rownames(mat) <- paste0("feat", seq(nrows))
 #' colnames(mat) <- paste0("cell", seq(ncols))
 #' 
 #' 
 #' #######################################################################
-#' ## IterativeLSI() examples 
+#' ## IterativeLSI() examples
 #' #######################################################################
 #' dim_reduction <- IterativeLSI(mat, n_dimensions = 5)
 #' 
