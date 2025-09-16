@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">BPCells</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -144,10 +144,10 @@
         <dd>Merge peaks</dd>
       </dl><dl><dt>
 
-          <code><a href="write_insertion_bedgraph.html">write_insertion_bedgraph()</a></code>
+          <code><a href="write_insertion_bedgraph.html">write_insertion_bedgraph()</a></code> <code><a href="write_insertion_bedgraph.html">write_insertion_bed()</a></code>
 
         </dt>
-        <dd>Write insertion counts to bedgraph file</dd>
+        <dd>Write insertion counts to bed/bedgraph file</dd>
       </dl></div><div class="section level2">
 
       <h3 id="fragment-operations">Fragment Operations<a class="anchor" aria-label="anchor" href="#fragment-operations"></a></h3>
@@ -462,13 +462,19 @@
 
       <dl><dt>
 
+          <code><a href="cluster_cells_graph.html">cluster_cells_graph()</a></code>
+
+        </dt>
+        <dd>Cluster cell embeddings using a KNN graph-based algorithm</dd>
+      </dl><dl><dt>
+
           <code><a href="knn.html">knn_hnsw()</a></code> <code><a href="knn.html">knn_annoy()</a></code>
 
         </dt>
-        <dd>Get a knn matrix from reduced dimensions</dd>
+        <dd>Get a knn object from reduced dimensions</dd>
       </dl><dl><dt>
 
-          <code><a href="cluster.html">cluster_graph_leiden()</a></code> <code><a href="cluster.html">cluster_graph_louvain()</a></code> <code><a href="cluster.html">cluster_graph_seurat()</a></code>
+          <code><a href="cluster_graph.html">cluster_graph_leiden()</a></code> <code><a href="cluster_graph.html">cluster_graph_louvain()</a></code> <code><a href="cluster_graph.html">cluster_graph_seurat()</a></code>
 
         </dt>
         <dd>Cluster an adjacency matrix</dd>
